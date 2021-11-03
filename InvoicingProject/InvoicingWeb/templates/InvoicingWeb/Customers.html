@@ -1,9 +1,12 @@
 {%if customer_list %}
-<ul>
+<ol>
 	{% for customer in customer_list %}
-		<li> <a href="/InvoicingWeb/Customers/{{customer.CustomerName}}">{{customer.CustomerName}}</a></li>
+		<li> 
+			{{customer.CustomerName}} <a href="/InvoicingWeb/Customers/{{customer.CustomerName}}"> Details </a> 
+			<a href="/InvoicingWeb/Invoices/{{customer.CustomerName}}"> Invoices</a>
+		</li>
 	{% endfor %}
-<ul>
+<ol>
 {%else%}
 	<p>no Customers. Go get some. Or Panic</p>
 {%endif%}

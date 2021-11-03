@@ -1,0 +1,12 @@
+{%if partner_list %}
+<ol>
+	{% for partner in partner_list %}
+		<li> 
+			{{partner.PartnerName}} <a href="/InvoicingWeb/Partners/{{partner.PartnerName}}"> Details </a> 
+			<a href="/InvoicingWeb/Invoices/{{partner.PartnerName}}"> Invoices</a>
+		</li>
+	{% endfor %}
+<ol>
+{%else%}
+	<p>no Partners. Go get some. Or Panic</p>
+{%endif%}

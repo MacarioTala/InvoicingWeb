@@ -1,7 +1,10 @@
 {%if customer_invoice_list %}
 <ul>
 	{% for invoice in customer_invoice_list %}
-		<li> <a href="/InvoicingWeb/Search/Customer/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a></li>
+		<li> 
+			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a>
+			<a href="/InvoicingWeb/SideBySide/{{invoice.InvoiceNumber}}"> side by side </a>
+		</li>
 	{% endfor %}
 <ul>
 {%else%}

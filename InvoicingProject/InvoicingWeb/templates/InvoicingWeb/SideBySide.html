@@ -1,8 +1,71 @@
-{% load static %}
-<link href="{% static "tinymce/css/prism.css" %}" rel="stylesheet">
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+</style>
 </head>
-<body>
-Customer Invoice : {{customer_invoice.InvoiceNumber}}
-Partner Invoice : {{partner_invoice.InvoiceNumber}}
-<script src="{% static "tinymce/js/prism.js" %}"></script>
+<div class="row">
+  <div class="column">
+    <table>
+      <tr>
+        <th>Customer Invoice</th>
+      </tr>
+      <tr>
+        <td>Invoice Number </td>
+        <td>{{customer_invoice.InvoiceNumber}}</td>
+      </tr>
+	  <tr>
+		<td> Invoice Amount </td>
+		<td> {{customer_invoice_total}}</td>
+	  </tr>
+	  <tr>
+		<td> Invoice Hours </td>
+		<td> {{customer_hours_total}}</td>
+	  </tr>
+    </table>
+  </div>
+  <div class="column">
+    <table>
+      <tr>
+        <th>Partner Invoice</th>
+      </tr>
+      <tr>
+        <td>Invoice Number</td>
+        <td>{{partner_invoice.InvoiceNumber}}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
 </body>
+</html>

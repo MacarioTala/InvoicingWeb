@@ -9,6 +9,7 @@ urlpatterns=[path('',views.index,name='Index'),
 	path('Invoices/<customer_name>',views.customer_invoices,name='Customer Invoices'),
 	path('PartnerInvoices/<partner_name>',views.partner_invoices,name='Partner Invoices'),
 	path('Customers',views.customers,name='Customers'),
+	path('Partners',views.partners,name='Partners'),
 	path('Customers/<customer_name>',views.customer_detail,name='Customer Detail'),
 	path('SideBySide/<invoice_number>',views.side_by_side,name='Side By Side')
 	]

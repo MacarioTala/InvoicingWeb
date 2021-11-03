@@ -2,12 +2,36 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader,Context, Template
 from django.db.models import Sum
-from .models import CustomerInvoice,Customer,CustomerInvoiceLineItem,PartnerInvoice,PartnerInvoiceLineItem
+from .models import Customer,CustomerInvoice,CustomerInvoiceLineItem
+from .models import Partner,PartnerInvoice,PartnerInvoiceLineItem
 # Create your views here.
 
 def index(request):
-	return HttpResponse("Test Index")
+	#data
+	#display
+	context=({})
+	return render(request=request, template_name='InvoicingWeb/Index.html',context=context)
 
+#get all customers
+def customers(request):
+	#data
+	customer_list=Customer.objects.order_by('CustomerName')
+	
+	#display
+	context=({"customer_list": customer_list})
+
+	return render(request=request,template_name='InvoicingWeb/Customers.html',context=context)
+	
+#get all partners
+def partners(request):
+	#data
+	partner_list=Partner.objects.order_by('PartnerName')
+	
+	#display
+	context=({"partner_list": partner_list})
+
+	return render(request=request,template_name='InvoicingWeb/Partners.html',context=context)
+	
 #get all invoices of a customer
 def customer_invoices(request,customer_name):
 	customer_invoice_list=CustomerInvoice.objects.filter(InvoiceCustomer__CustomerName=customer_name)
@@ -38,13 +62,24 @@ def partner_invoice_detail(request,invoice_number):
 	"invoice_hours_total":hours_total}) 
 	
 	return render(request=request,template_name='InvoicingWeb/PartnerInvoiceDetail.html',context=context)
+
+def customer_invoice_totals(invoice_number):
+	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
+	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
+	invoice_total = relevant_invoice_lineitems.aggregate(Sum('CInvoiceLineItemAmount'))['CInvoiceLineItemAmount__sum'] 
+	hours_total = relevant_invoice_lineitems.aggregate(Sum('CInvoiceLineItemHours'))['CInvoiceLineItemHours__sum']
+	
+	#totals 
+	totals=({"invoice_total" : invoice_total,
+	"hours_total": hours_total})
+	return totals
 	
 def customer_invoice_detail(request,invoice_number):
 	#data
 	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
 	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	invoice_total = relevant_invoice_lineitems.aggregate(sum=Sum('CInvoiceLineItemAmount')).values #this currently renders as datatype(value) eg Decimal(200) not sure why
-	hours_total = relevant_invoice_lineitems.aggregate(sum=Sum('CInvoiceLineItemHours')).values
+	invoice_total = customer_invoice_totals(invoice_number)["invoice_total"]
+	hours_total = customer_invoice_totals(invoice_number)["hours_total"]
 	partner_invoice = PartnerInvoice.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber).get()
 	
 	#display
@@ -55,15 +90,6 @@ def customer_invoice_detail(request,invoice_number):
 	"partner_invoice": partner_invoice}) 
 	return render(request=request, template_name='InvoicingWeb/CustomerInvoiceDetail.html',context=context)
 
-def customers(request):
-	#data
-	customer_list=Customer.objects.order_by('CustomerName')
-	
-	#display
-	context=({"customer_list": customer_list})
-
-	return render(request=request,template_name='InvoicingWeb/Customers.html',context=context)
-	
 def customer_detail(request,customer_name):
 	#data
 	customer=Customer.objects.filter(CustomerName=customer_name).get()
@@ -74,6 +100,7 @@ def customer_detail(request,customer_name):
 	return render(request=request,template_name='InvoicingWeb/CustomerDetail.html',context=context)
 	
 def side_by_side(request,invoice_number):
+	#data
 	#check if invoice_number is a customer or partner invoice
 	customer_invoice_exists=CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).exists()
 	partner_invoice_exists=PartnerInvoice.objects.filter(InvoiceNumber=invoice_number).exists()
@@ -87,10 +114,16 @@ def side_by_side(request,invoice_number):
 	else: #!customer_invoice_exists && !partner_invoice_exists
 		customer_invoice=None
 		partner_invoice=None
+	#totals
+	customer_invoice_total = customer_invoice_totals(invoice_number)["invoice_total"]
+	customer_hours_total = customer_invoice_totals(invoice_number)["hours_total"]
+	
 	
 	#display
 	context=({"customer_invoice" :customer_invoice,
-	"partner_invoice":partner_invoice
+	"customer_invoice_total": customer_invoice_total,
+	"customer_hours_total": customer_hours_total,
+	"partner_invoice":partner_invoice	
 	})
 	
 	return render(request=request, template_name='InvoicingWeb/SideBySide.html',context=context)
