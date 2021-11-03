@@ -1,0 +1,57 @@
+{% load static %}
+<link href="{% static "tinymce/css/prism.css" %}" rel="stylesheet">
+</head>
+<body>
+<TABLE border=1 ">
+<tr> 
+	<td> Customer Invoice :</td> 
+	<td>{{invoice.InvoiceNumber}}</td>
+</tr>
+<tr> 
+	<td> Customer : </td> 
+	<td> {{invoice.InvoiceCustomer.CustomerName}}</td>
+</tr>
+<tr> 
+	<td> Issue Date:</td> 
+	<td> {{invoice.InvoiceIssueDate}}</td>
+</tr>
+<tr> 
+	<td> Paid Date: </td> 
+	<td> {{invoice.InvoicePaidDate}}</td>
+</tr>
+<tr> 
+	<td> Invoice URL:</td> 
+	<td> {{invoice.InvoiceURL}}</td>
+</tr>
+<tr>
+	<td> Linked Partner Invoice:</td>
+	<td> 
+		<a href="/InvoicingWeb/Partner/Invoice/{{partner_invoice.InvoiceNumber}}">{{partner_invoice.InvoiceNumber}}</a> 
+		<a href=""> Show side by side </a>
+	</td>
+</tr>
+</TABLE>
+</p>
+Invoice Items:
+{% for LineItem in invoice_line_items %}
+<TABLE border=1>
+	<tr>
+		<td>{{LineItem.CInvoiceLineItemResource.ResourceName}}</td>
+		<td>{{LineItem.CInvoiceLineItemHours}}</td>
+		<td>{{LineItem.CInvoiceLineItemAmount}}</td>
+	</tr>
+</TABLE>
+{%endfor%}
+</p>
+Totals:
+<TABLE border=1>
+<tr> 
+	<td>Total Hours = </td>
+	<td>{{invoice_hours_total}}</td>
+</tr>
+<tr> 
+	<td> Invoice Total = </td> 
+	<td> {{invoice_total}}</td>
+</tr>
+<script src="{% static "tinymce/js/prism.js" %}"></script>
+</body>

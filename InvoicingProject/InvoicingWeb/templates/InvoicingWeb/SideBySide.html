@@ -1,0 +1,8 @@
+{% load static %}
+<link href="{% static "tinymce/css/prism.css" %}" rel="stylesheet">
+</head>
+<body>
+Customer Invoice : {{customer_invoice.InvoiceNumber}}
+Partner Invoice : {{partner_invoice.InvoiceNumber}}
+<script src="{% static "tinymce/js/prism.js" %}"></script>
+</body>

@@ -1,0 +1,9 @@
+{%if customer_invoice_list %}
+<ul>
+	{% for invoice in customer_invoice_list %}
+		<li> <a href="/InvoicingWeb/Search/Customer/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a></li>
+	{% endfor %}
+<ul>
+{%else%}
+	<p>no invoices for {{customer_name}}</p>
+{%endif%}

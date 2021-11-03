@@ -1,3 +1,21 @@
+# local
+/Invoicing/InvoicingProject/InvoicingWeb/__pycache__/
+/Invoicing/InvoicingProject/InvoicingWeb/migrations/__pycache__/
+/InvoicingProject/InvoicingWeb/__pycache__/
+/Invoicing/__pycache__/
+/InvoicingWeb/migrations/__pycache__/
+/Invoicing/__pycache__/
+Invoicing/Invoicing/__pycache__/
+/InvoicingEnvironment/
+venv/
+.idea/
+Invoicing/db.sqlite3
+cert/
+*.pem
+*.cert
+Invoicing/.env
+Invoicing/tunnel.key
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
