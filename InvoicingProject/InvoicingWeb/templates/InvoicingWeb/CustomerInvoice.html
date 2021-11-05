@@ -1,9 +1,13 @@
-{%if customer_invoice_list %}
+{%if invoice_list %}
 <ul>
-	{% for invoice in customer_invoice_list %}
+	{% for invoice in invoice_list %}		
 		<li> 
-			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a>
-			<a href="/InvoicingWeb/SideBySide/{{invoice.InvoiceNumber}}"> side by side </a>
+			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
+			{% if invoice.PartnerInvoiceNumber %}
+			<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
+			{% else %}
+			No associated Partner Invoice
+			{% endif %}
 		</li>
 	{% endfor %}
 <ul>

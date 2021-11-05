@@ -10,6 +10,13 @@ class Resource(models.Model):
     def __str__(self) -> str:
 	    return self.ResourceName
 
+class Remittance(models.Model):
+    RemittanceId=models.AutoField(primary_key=True)
+    RemittanceDate=models.DateField(null=True)
+    RemittanceConfirmationCode=models.CharField(blank=True,max_length=50)
+    RemittanceAmount=models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+
+#customer stuff	
 class Customer(models.Model):
     CustomerId=models.AutoField(primary_key=True)
     CustomerName=models.CharField(max_length=100)
@@ -39,6 +46,37 @@ class CustomerInvoiceLineItem(models.Model):
     CInvoiceLineItemHours=models.DecimalField(max_digits=12,decimal_places=2)
     CInvoiceLineItemComments=models.CharField(max_length=127,null=True,blank=True)
 
+#partner stuff
+class Partner(models.Model):
+    PartnerId=models.AutoField(primary_key=True)
+    PartnerName=models.CharField(max_length=30)
+	
+    def __str__(self) -> str:
+	    return self.PartnerName
+
+class PartnerInvoice(models.Model):
+    InvoiceId=models.AutoField(primary_key=True)
+    InvoiceNumber=models.CharField(max_length=30)
+    InvoiceIssueDate=models.DateField(null=True)
+    InvoiceFromDate=models.DateField(null=True)
+    InvoiceToDate=models.DateField(null=True)
+    InvoicePartner=models.ForeignKey(Partner, on_delete=models.DO_NOTHING)
+    InvoiceURL=models.URLField(max_length=200)
+    CustomerInvoice=models.OneToOneField(CustomerInvoice,on_delete=models.DO_NOTHING)
+    CoveredByRemittance=models.ForeignKey(Remittance,on_delete=models.DO_NOTHING,null=True,blank=True)
+		
+    def __str__(self) -> str:
+	    return self.InvoiceNumber
+
+class PartnerInvoiceLineItem(models.Model):
+    PILineItemId=models.AutoField(primary_key=True)
+    PartnerInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.CASCADE)
+    PILineItemAmount=models.DecimalField(max_digits=12,decimal_places=2)
+    PILineItemResource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
+    PILineItemHours=models.DecimalField(max_digits=12,decimal_places=2)
+    PILineItemComments=models.CharField(max_length=127,null=True,blank=True)	
+
+#project Stuff
 class Project(models.Model):
     ProjectId=models.AutoField(primary_key=True)
     ProjectName=models.CharField(max_length=200, blank=False,null=False)
@@ -52,42 +90,3 @@ class ProjectResource(models.Model):
     ProjectResourceProject=models.ForeignKey(Project,on_delete=models.DO_NOTHING)
     ProjectResourceRateToCustomer=models.DecimalField(max_digits=12,decimal_places=2)
     ProjectResourceTransferRate=models.DecimalField(max_digits=12,decimal_places=2)
-	
-
-class Partner(models.Model):
-    PartnerId=models.AutoField(primary_key=True)
-    PartnerName=models.CharField(max_length=30)
-	
-    def __str__(self) -> str:
-	    return self.PartnerName
-
-class Remittance(models.Model):
-    RemittanceId=models.AutoField(primary_key=True)
-    RemittanceDate=models.DateField(null=True)
-    RemittanceConfirmationCode=models.CharField(blank=True,max_length=50)
-    RemittanceAmount=models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
-
-class PartnerInvoice(models.Model):
-    InvoiceId=models.AutoField(primary_key=True)
-    InvoiceNumber=models.CharField(max_length=30)
-    InvoiceIssueDate=models.DateField(null=True)
-    InvoiceFromDate=models.DateField(null=True)
-    InvoiceToDate=models.DateField(null=True)
-    InvoicePartner=models.ForeignKey(Partner, on_delete=models.DO_NOTHING)
-    InvoiceURL=models.URLField(max_length=200)
-    CustomerInvoice=models.ForeignKey(CustomerInvoice,on_delete=models.DO_NOTHING)
-    CoveredByRemittance=models.ForeignKey(Remittance,on_delete=models.DO_NOTHING,null=True,blank=True)
-		
-    def __str__(self) -> str:
-	    return self.InvoiceNumber
-
-class PartnerInvoiceLineItem(models.Model):
-    PILineItemId=models.AutoField(primary_key=True)
-    PILineItemInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.CASCADE)
-    PILineItemAmount=models.DecimalField(max_digits=12,decimal_places=2)
-    PILineItemResource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
-    PILineItemHours=models.DecimalField(max_digits=12,decimal_places=2)
-    PILineItemComments=models.CharField(max_length=127,null=True,blank=True)
-	
-
-	
