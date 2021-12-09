@@ -1,8 +1,65 @@
-{% load static %}
-<link href="{% static "tinymce/css/prism.css" %}" rel="stylesheet">
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+</style>
 </head>
 <body>
-<TABLE border=1 ">
+<TABLE border=1>
 <tr> 
 	<td> Customer Invoice :</td> 
 	<td>{{invoice.InvoiceNumber}}</td>
@@ -39,18 +96,24 @@
 	{% endif %}
 </tr>
 </TABLE>
-</p>
-Invoice Items:
-{% for LineItem in invoice_line_items %}
+<button class="collapsible"> Invoice Items:</button>
+<div class="content">
 <TABLE border=1>
 	<tr>
-		<td>{{LineItem.CInvoiceLineItemResource.ResourceName}}</td>
-		<td>{{LineItem.CInvoiceLineItemHours}}</td>
-		<td>{{LineItem.CInvoiceLineItemAmount}}</td>
+		<th> Resource Name </th>
+		<th> Total Hours </th>
+		<th> Total Amount</th>
 	</tr>
-</TABLE>
+{% for LineItem in invoice_line_items %}
+	<tr>
+		<td>{{LineItem.Resource.ResourceName}}</td>
+		<td>{{LineItem.TotalHours}}</td>
+		<td>{{LineItem.TotalAmount}}</td>
+	</tr>
 {%endfor%}
-</p>
+</TABLE>
+</div>
+
 Totals:
 <TABLE border=1>
 <tr> 
@@ -61,5 +124,22 @@ Totals:
 	<td> Invoice Total = </td> 
 	<td> {{invoice_total}}</td>
 </tr>
-<script src="{% static "tinymce/js/prism.js" %}"></script>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+
 </body>

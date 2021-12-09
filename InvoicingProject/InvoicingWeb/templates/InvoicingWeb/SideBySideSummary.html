@@ -34,18 +34,28 @@ tr:nth-child(even) {
 }
 </style>
 </head>
-<a href="/InvoicingWeb/SideBySideSummary/{{customer_name}}"> Show all invoices side by side </a>
-</p>
-{%if invoice_list %}
+{%if side_by_side_list %}
 <table>
-	{% for invoice in invoice_list %}		
-		<tr> 
+	{% for invoice in side_by_side_list %}		
+		<tr>
+		<th>Customer Invoice</th>
+		<th>Invoice Amount</th>
+		<th>Partner Invoice</th>
+		<th>Invoice Amount</th>
+		</tr>
+		<tr>
+			<td>
 			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
-			{% if invoice.PartnerInvoiceNumber %}
-			<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
-			{% else %}
-			No associated Partner Invoice
-			{% endif %}
+			</td>
+			<td>
+			{{invoice.CustomerAmount}}
+			</td>
+			<td>
+			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoiceNumber}}</a>
+			</td>
+			<td>
+			{{invoice.PartnerAmount}}
+			</td>
 		</tr>
 	{% endfor %}
 </table>

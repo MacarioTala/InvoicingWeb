@@ -1,5 +1,7 @@
 from django.db import models
 from ckeditor.fields import RichTextField
+from djmoney.models.fields import MoneyField
+
 
 # Create your models here.
 class Resource(models.Model):
@@ -41,10 +43,11 @@ class CustomerInvoice(models.Model):
 class CustomerInvoiceLineItem(models.Model):
     CInvoiceLineItemId=models.AutoField(primary_key=True)
     CustomerInvoice=models.ForeignKey(CustomerInvoice,on_delete=models.CASCADE)
-    CInvoiceLineItemAmount=models.DecimalField(max_digits=12,decimal_places=2)
-    CInvoiceLineItemResource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
-    CInvoiceLineItemHours=models.DecimalField(max_digits=12,decimal_places=2)
-    CInvoiceLineItemComments=models.CharField(max_length=127,null=True,blank=True)
+    Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING,null=True)
+    TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
+    Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    Comments=models.CharField(max_length=127,null=True,blank=True)
 
 #partner stuff
 class Partner(models.Model):
@@ -71,10 +74,11 @@ class PartnerInvoice(models.Model):
 class PartnerInvoiceLineItem(models.Model):
     PILineItemId=models.AutoField(primary_key=True)
     PartnerInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.CASCADE)
-    PILineItemAmount=models.DecimalField(max_digits=12,decimal_places=2)
-    PILineItemResource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
-    PILineItemHours=models.DecimalField(max_digits=12,decimal_places=2)
-    PILineItemComments=models.CharField(max_length=127,null=True,blank=True)	
+    Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
+    TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
+    Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    Comments=models.CharField(max_length=127,null=True,blank=True)	
 
 #project Stuff
 class Project(models.Model):
@@ -87,6 +91,8 @@ class Project(models.Model):
 	
 class ProjectResource(models.Model):
     ProjectResourceId=models.AutoField(primary_key=True)
-    ProjectResourceProject=models.ForeignKey(Project,on_delete=models.DO_NOTHING)
-    ProjectResourceRateToCustomer=models.DecimalField(max_digits=12,decimal_places=2)
-    ProjectResourceTransferRate=models.DecimalField(max_digits=12,decimal_places=2)
+    Project=models.ForeignKey(Project,on_delete=models.DO_NOTHING)
+    RateToCustomer=models.DecimalField(max_digits=12,decimal_places=2)
+    TransferRate=models.DecimalField(max_digits=12,decimal_places=2)
+    FromDate=models.DateField(null=True)
+    ToDate=models.DateField(null=True)
