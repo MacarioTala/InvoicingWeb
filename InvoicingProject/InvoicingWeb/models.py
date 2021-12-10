@@ -12,6 +12,7 @@ class Resource(models.Model):
     def __str__(self) -> str:
 	    return self.ResourceName
 
+	
 class Remittance(models.Model):
     RemittanceId=models.AutoField(primary_key=True)
     RemittanceDate=models.DateField(null=True)
@@ -89,10 +90,15 @@ class Project(models.Model):
     def __str__(self) -> str:
 	    return self.ProjectName
 	
-class ProjectResource(models.Model):
+class ResourceRate(models.Model):
     ProjectResourceId=models.AutoField(primary_key=True)
-    Project=models.ForeignKey(Project,on_delete=models.DO_NOTHING)
+    Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
+    Project=models.ForeignKey(Project,on_delete=models.DO_NOTHING,null=True)
+    Customer=models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     RateToCustomer=models.DecimalField(max_digits=12,decimal_places=2)
     TransferRate=models.DecimalField(max_digits=12,decimal_places=2)
     FromDate=models.DateField(null=True)
     ToDate=models.DateField(null=True)
+
+    def __str__(self) -> str:
+	    return self.Resource.ResourceName + " " + self.Customer.CustomerName

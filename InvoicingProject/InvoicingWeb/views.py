@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader,Context, Template
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from .models import Customer,CustomerInvoice,CustomerInvoiceLineItem
-from .models import Partner,PartnerInvoice,PartnerInvoiceLineItem
+from .models import Partner,PartnerInvoice,PartnerInvoiceLineItem,ResourceRate
 from djmoney.models.fields import MoneyField
 from djmoney.money import Money
 # Create your views here.
@@ -136,11 +136,13 @@ def side_by_side(request,invoice_number):
 #functions
 def get_customer_side_by_side_data(request,customer_name):
 	class side_by_side_row:
-		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerAmount):
+		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerAmount, Margin):
 			self.CustomerInvoiceNumber=CustomerInvoiceNumber
 			self.CustomerAmount=CustomerAmount
 			self.PartnerInvoiceNumber=PartnerInvoiceNumber
 			self.PartnerAmount=PartnerAmount
+			self.Margin=Margin
+			
 	
 	customer_invoices=get_customer_invoice_data(request,customer_name)["invoice_list"]
 	
@@ -149,7 +151,8 @@ def get_customer_side_by_side_data(request,customer_name):
 	for customer_invoice in customer_invoices:
 		customer_amount=customer_invoice_totals(customer_invoice.CustomerInvoiceNumber)["invoice_total"]
 		partner_amount=partner_invoice_totals(customer_invoice.PartnerInvoiceNumber)["invoice_total"] 
-		side_by_side_item=side_by_side_row(CustomerInvoiceNumber=customer_invoice.CustomerInvoiceNumber,PartnerInvoiceNumber=customer_invoice.PartnerInvoiceNumber,CustomerAmount=customer_amount, PartnerAmount=partner_amount)
+		margin=round(((customer_amount.amount-partner_amount.amount)/customer_amount.amount*100),2)
+		side_by_side_item=side_by_side_row(CustomerInvoiceNumber=customer_invoice.CustomerInvoiceNumber,PartnerInvoiceNumber=customer_invoice.PartnerInvoiceNumber,CustomerAmount=customer_amount, PartnerAmount=partner_amount,Margin=margin)
 		side_by_side_list.append(side_by_side_item)
 	
 	context= {"side_by_side_list" : side_by_side_list}
@@ -157,7 +160,6 @@ def get_customer_side_by_side_data(request,customer_name):
 	return context
 
 def get_customer_invoice_data(request,customer_name):
-	#data
 	customer_invoice_list=CustomerInvoice.objects.filter(InvoiceCustomer__CustomerName=customer_name)
 	#we currently also need to grab all the partner invoices, because the relationship starts at partner invoice not yet sure if a better way exists. 
 	partner_invoice_list=PartnerInvoice.objects.filter(CustomerInvoice__InvoiceCustomer__CustomerName=customer_name)
@@ -177,14 +179,38 @@ def get_customer_invoice_data(request,customer_name):
 	"invoice_list" : invoice_list}
 	return context
 
+def get_resource_rate(resource_id, customer_id):
+	relevant_ResourceRate_object = ResourceRate.objects.get(Q(Customer__CustomerId=customer_id) & Q(Resource__ResourceId=resource_id))
+	rate_to_customer=relevant_ResourceRate_object.RateToCustomer
+	transfer_rate=relevant_ResourceRate_object.TransferRate
+	
+	context= { "rate_to_customer" : rate_to_customer,
+	"transfer_rate" : transfer_rate}
+	
+	return context
+
 def customer_invoice_totals(invoice_number):
 	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
 	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	invoice_total = relevant_invoice_lineitems.aggregate(Sum('TotalAmount'))['TotalAmount__sum'] 
+	
+	class rate_adjusted_line_item:
+		def __init__(self,CustomerInvoiceLineItem,TotalAmount):
+			self.CustomerInvoiceLineItem=CustomerInvoiceLineItem
+			self.TotalAmount=TotalAmount
+	rate_adjusted_line_items= []
+	
+	for line_item in relevant_invoice_lineitems: #This is very DB heavy, refactor this later
+			current_rate = get_resource_rate(customer_id=line_item.CustomerInvoice.InvoiceCustomer.CustomerId,
+			resource_id=line_item.Resource.ResourceId)['rate_to_customer']
+			total_amount = line_item.TotalHours * current_rate
+			current_item = rate_adjusted_line_item(rate_adjusted_line_item,total_amount)
+			rate_adjusted_line_items.append(current_item)
+	
+	invoice_total = sum(rate_adjusted_line_item.TotalAmount for rate_adjusted_line_item in rate_adjusted_line_items)
 	hours_total = relevant_invoice_lineitems.aggregate(Sum('TotalHours'))['TotalHours__sum']
 	
 	#totals 
-	totals=({"invoice_total" : Money(invoice_total,'USD'),
+	totals=({"invoice_total" : Money(invoice_total,'USD'),#remove hardcode of USD later
 	"hours_total": round(hours_total,2)})
 	return totals
 

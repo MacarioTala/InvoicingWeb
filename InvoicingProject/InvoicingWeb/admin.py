@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project,Resource,Customer,CustomerInvoice,CustomerInvoiceLineItem,ProjectResource,Partner,PartnerInvoice,PartnerInvoiceLineItem
+from .models import Project,Resource,Customer,CustomerInvoice,CustomerInvoiceLineItem,ResourceRate,Partner,PartnerInvoice,PartnerInvoiceLineItem
 
 #Inlines and custom admins
 class PartnerInvoiceLineItemInline(admin.TabularInline):
@@ -24,6 +24,6 @@ admin.site.register(Project)
 admin.site.register(Resource)
 admin.site.register(Customer)
 admin.site.register(CustomerInvoice,CustomerInvoiceAdmin)
-admin.site.register(ProjectResource)
+admin.site.register(ResourceRate)
 admin.site.register(PartnerInvoice,PartnerInvoiceAdmin)
 admin.site.register(Partner)
