@@ -38,7 +38,7 @@ def partners(request):
 def customer_invoices(request,customer_name):
 	template=loader.get_template('InvoicingWeb/CustomerInvoice.html')
 	
-	context = get_customer_invoice_data(request,customer_name)
+	context = get_customer_invoice_data(customer_name)
 	
 	return HttpResponse(template.render(context,request))
 	
@@ -49,27 +49,20 @@ def customer_invoices_side_by_side(request,customer_name):
 	
 	return HttpResponse(template.render(context,request)) 
 
-def partner_invoices(request,partner_name,customer_name):
+def partner_invoices(request,partner_name):
 	partner_invoice_list=PartnerInvoice.objects.filter(InvoicePartner__PartnerName=partner_name)
-	template=loader.get_template('InvoicingWeb/PartnerInvoice.html')
-	context = {"partner_invoice_list" : partner_invoice_list,
+	template_name='InvoicingWeb/PartnerInvoice.html'
+	
+	context = {"invoice_list" : partner_invoice_list,
 	"partner_name":partner_name}
-	return HttpResponse(template.render(context,request))
+	
+	return render(request=request,template_name=template_name,context=context)
 	
 def partner_invoice_detail(request,invoice_number):
-	#data
-	relevant_invoice = PartnerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
-	relevant_invoice_lineitems=PartnerInvoiceLineItem.objects.filter(PartnerInvoice__InvoiceNumber=invoice_number)
-	invoice_total=partner_invoice_totals(invoice_number)["invoice_total"] 
-	hours_total=partner_invoice_totals(invoice_number)["hours_total"] 
+	context = get_partner_invoice_detail_data(invoice_number)
+	template_name='InvoicingWeb/PartnerInvoiceDetail.html'
 	
-	#display
-	context=({"invoice" : relevant_invoice, 
-	"invoice_total" : invoice_total, 
-	"invoice_line_items": relevant_invoice_lineitems,
-	"invoice_hours_total":hours_total}) 
-	
-	return render(request=request,template_name='InvoicingWeb/PartnerInvoiceDetail.html',context=context)
+	return render(request=request,template_name=template_name,context=context)
 
 def customer_invoice_detail(request,invoice_number):
 	#data
@@ -144,7 +137,7 @@ def get_customer_side_by_side_data(request,customer_name):
 			self.Margin=Margin
 			
 	
-	customer_invoices=get_customer_invoice_data(request,customer_name)["invoice_list"]
+	customer_invoices=get_customer_invoice_data(customer_name)["invoice_list"]
 	
 	side_by_side_list=[]
 	
@@ -159,7 +152,7 @@ def get_customer_side_by_side_data(request,customer_name):
 	
 	return context
 
-def get_customer_invoice_data(request,customer_name):
+def get_customer_invoice_data(customer_name):
 	customer_invoice_list=CustomerInvoice.objects.filter(InvoiceCustomer__CustomerName=customer_name)
 	#we currently also need to grab all the partner invoices, because the relationship starts at partner invoice not yet sure if a better way exists. 
 	partner_invoice_list=PartnerInvoice.objects.filter(CustomerInvoice__InvoiceCustomer__CustomerName=customer_name)
@@ -179,6 +172,21 @@ def get_customer_invoice_data(request,customer_name):
 	"invoice_list" : invoice_list}
 	return context
 
+def get_partner_invoice_detail_data(invoice_number):
+	#data
+	relevant_invoice = PartnerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
+	relevant_invoice_lineitems=PartnerInvoiceLineItem.objects.filter(PartnerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
+	invoice_total=partner_invoice_totals(invoice_number)["invoice_total"] 
+	hours_total=partner_invoice_totals(invoice_number)["hours_total"] 
+	
+	#display
+	context=({"invoice" : relevant_invoice, 
+	"invoice_total" : invoice_total, 
+	"invoice_line_items": relevant_invoice_lineitems,
+	"invoice_hours_total":hours_total}) 
+	
+	return context
+	
 def get_resource_rate(resource_id, customer_id):
 	relevant_ResourceRate_object = ResourceRate.objects.get(Q(Customer__CustomerId=customer_id) & Q(Resource__ResourceId=resource_id))
 	rate_to_customer=relevant_ResourceRate_object.RateToCustomer
@@ -199,7 +207,7 @@ def customer_invoice_totals(invoice_number):
 			self.TotalAmount=TotalAmount
 	rate_adjusted_line_items= []
 	
-	for line_item in relevant_invoice_lineitems: #This is very DB heavy, refactor this later
+	for line_item in relevant_invoice_lineitems: #This is very DB heavy, refactor this later. This is one hit per line_item
 			current_rate = get_resource_rate(customer_id=line_item.CustomerInvoice.InvoiceCustomer.CustomerId,
 			resource_id=line_item.Resource.ResourceId)['rate_to_customer']
 			total_amount = line_item.TotalHours * current_rate
@@ -217,7 +225,22 @@ def customer_invoice_totals(invoice_number):
 def partner_invoice_totals(invoice_number):
 	relevant_invoice = PartnerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
 	relevant_invoice_lineitems = PartnerInvoiceLineItem.objects.filter(PartnerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	invoice_total = relevant_invoice_lineitems.aggregate(Sum('TotalAmount'))['TotalAmount__sum'] 
+	current_customer_id=relevant_invoice_lineitems.first().PartnerInvoice.CustomerInvoice.InvoiceCustomer.CustomerId
+	
+	class rate_adjusted_line_item:
+		def __init__(self, InvoiceLineItem, TotalAmount):
+			self.InvoiceLineItem=InvoiceLineItem
+			self.TotalAmount=TotalAmount
+	rate_adjusted_line_items=[]
+	
+	for line_item in relevant_invoice_lineitems: #This is very DB heavy, refactor this later. This is one hit per line_item
+			current_rate = get_resource_rate(customer_id=current_customer_id,
+			resource_id=line_item.Resource.ResourceId)['transfer_rate']
+			total_amount = line_item.TotalHours * current_rate
+			current_item = rate_adjusted_line_item(rate_adjusted_line_item,total_amount)
+			rate_adjusted_line_items.append(current_item)
+	
+	invoice_total = sum(rate_adjusted_line_item.TotalAmount for rate_adjusted_line_item in rate_adjusted_line_items)
 	hours_total = relevant_invoice_lineitems.aggregate(Sum('TotalHours'))['TotalHours__sum']
 	
 	#totals 

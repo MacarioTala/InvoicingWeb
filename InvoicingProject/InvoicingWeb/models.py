@@ -46,8 +46,8 @@ class CustomerInvoiceLineItem(models.Model):
     CustomerInvoice=models.ForeignKey(CustomerInvoice,on_delete=models.CASCADE)
     Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING,null=True)
     TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
-    Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
-    TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    #Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    #TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
     Comments=models.CharField(max_length=127,null=True,blank=True)
 
 #partner stuff
@@ -95,8 +95,8 @@ class ResourceRate(models.Model):
     Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
     Project=models.ForeignKey(Project,on_delete=models.DO_NOTHING,null=True)
     Customer=models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
-    RateToCustomer=models.DecimalField(max_digits=12,decimal_places=2)
-    TransferRate=models.DecimalField(max_digits=12,decimal_places=2)
+    RateToCustomer=models.DecimalField(max_digits=14,decimal_places=2)
+    TransferRate=models.DecimalField(max_digits=14,decimal_places=2)
     FromDate=models.DateField(null=True)
     ToDate=models.DateField(null=True)
 

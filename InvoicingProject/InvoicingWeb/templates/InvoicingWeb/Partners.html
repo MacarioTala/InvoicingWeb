@@ -2,8 +2,8 @@
 <ol>
 	{% for partner in partner_list %}
 		<li> 
-			{{partner.PartnerName}} <a href="/InvoicingWeb/Partners/{{partner.PartnerName}}"> Details </a> 
-			<a href="/InvoicingWeb/Invoices/{{partner.PartnerName}}"> Invoices</a>
+			{{partner.PartnerName}} <a href="/InvoicingWeb/Partners/Invoices/{{partner.PartnerName}}"> Details </a> 
+			<a href="/InvoicingWeb/Partners/Invoices/{{partner.PartnerName}}"> Invoices</a>
 		</li>
 	{% endfor %}
 <ol>
