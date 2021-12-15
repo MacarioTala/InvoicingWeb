@@ -43,6 +43,7 @@ tr:nth-child(even) {
 			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
 			{% if invoice.PartnerInvoiceNumber %}
 			<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
+			<a href="/InvoicingWeb/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a> 
 			{% else %}
 			No associated Partner Invoice
 			{% endif %}

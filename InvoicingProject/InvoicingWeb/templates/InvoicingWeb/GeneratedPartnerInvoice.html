@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<TABLE border=1>
+<tr> 
+	<td> New Partner Invoice </td> 
+</tr>
+<tr> 
+	<td> Customer : </td> 
+	<td> {{customer_invoice.InvoiceCustomer.CustomerName}}</td>
+</tr>
+<tr> 
+	<td> Issue Date:</td> 
+	<td> {{customer_invoice.InvoiceIssueDate}}</td>
+</tr>
+<tr>
+	<td> Linked Customer Invoice:</td>
+	<td> 
+		<a href="/InvoicingWeb/Customer/Invoice/{{relevant_invoice.InvoiceNumber}}">{{customer_invoice.InvoiceNumber}}</a> 
+		<a href=""> Show side by side </a>
+	</td>
+</tr>
+</TABLE>
+<button class="collapsible"> Invoice Items:</button>
+<div class="content">
+<TABLE border=1>
+	<tr>
+		<th> Resource Name </th>
+		<th> Total Amount</th>
+		<th> Actual Hours </th>
+		<th> Calculated Hours </th>
+	</tr>
+{% for LineItem in partner_invoice_line_items %}
+	<tr>
+		<td>{{LineItem.customer_invoice_line_item.Resource.ResourceName}}</td>
+		<td>{{LineItem.Amount}}</td>
+		<td>{{LineItem.customer_invoice_line_item.TotalHours}}</td>
+		<td>{{LineItem.calculated_hours}}</td>
+	</tr>
+{%endfor%}
+</TABLE>
+</div>
+
+Totals:
+<TABLE border=1>
+<tr> 
+	<td> Invoice Total  </td> 
+	<td> {{total_amount}}</td>
+</tr>
+</table>
+<button type="button"> Write Partner Invoice to DB </button>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+
+</body>

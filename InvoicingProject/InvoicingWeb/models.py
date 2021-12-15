@@ -37,6 +37,7 @@ class CustomerInvoice(models.Model):
     InvoicePaidDate=models.DateField(null=True)
     InvoiceCustomer=models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     InvoiceURL=models.URLField(max_length=200)
+    AmountOnInvoice=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
 	
     def __str__(self) -> str:
 	    return self.InvoiceNumber
@@ -46,8 +47,6 @@ class CustomerInvoiceLineItem(models.Model):
     CustomerInvoice=models.ForeignKey(CustomerInvoice,on_delete=models.CASCADE)
     Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING,null=True)
     TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
-    #Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
-    #TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
     Comments=models.CharField(max_length=127,null=True,blank=True)
 
 #partner stuff
@@ -68,6 +67,7 @@ class PartnerInvoice(models.Model):
     InvoiceURL=models.URLField(max_length=200)
     CustomerInvoice=models.OneToOneField(CustomerInvoice,on_delete=models.DO_NOTHING)
     CoveredByRemittance=models.ForeignKey(Remittance,on_delete=models.DO_NOTHING,null=True,blank=True)
+    AmountOnInvoice=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
 		
     def __str__(self) -> str:
 	    return self.InvoiceNumber
