@@ -1,52 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
-* {
-  box-sizing: border-box;
-}
-
-.row {
-  display: flex;
-  margin-left:-5px;
-  margin-right:-5px;
-}
-
-.column {
-  flex: 50%;
-  padding: 5px;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-  border: 1px solid #ddd;
-}
-
-th, td {
-  text-align: left;
-  padding: 16px;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-</style>
-</head>
 <a href="/InvoicingWeb/SideBySideSummary/{{customer_name}}"> Show all invoices side by side </a>
 </p>
 {%if invoice_list %}
 <table>
 	{% for invoice in invoice_list %}		
 		<tr> 
-			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
-			{% if invoice.PartnerInvoiceNumber %}
-			<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
-			<a href="/InvoicingWeb/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a> 
-			{% else %}
-			No associated Partner Invoice
-			{% endif %}
+			<td>
+				<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
+				{% if invoice.PartnerInvoiceNumber %}
+				<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
+				{% else %}
+				No associated Partner Invoice
+				{% endif %}
+				<a href="/InvoicingWeb/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a> 
+			</td>
 		</tr>
 	{% endfor %}
 </table>

@@ -106,9 +106,9 @@ tr:nth-child(even) {
 	</tr>
 {% for LineItem in invoice_line_items %}
 	<tr>
-		<td>{{LineItem.Resource.ResourceName}}</td>
-		<td>{{LineItem.TotalHours}}</td>
-		<td>{{LineItem.TotalAmount}}</td>
+		<td>{{LineItem.invoice_line_item.Resource.ResourceName}}</td>
+		<td>{{LineItem.invoice_line_item.TotalHours}}</td>
+		<td>{{LineItem.amount}}</td>
 	</tr>
 {%endfor%}
 </TABLE>
@@ -117,13 +117,18 @@ tr:nth-child(even) {
 Totals:
 <TABLE border=1>
 <tr> 
-	<td>Total Hours = </td>
+	<td>Total Hours  </td>
 	<td>{{invoice_hours_total}}</td>
 </tr>
+<tr>
+	<td> Amount on Invoice </td>
+	<td> {{invoice.AmountOnInvoice}}</td>
+</tr>
 <tr> 
-	<td> Invoice Total = </td> 
+	<td> Invoice Total  </td> 
 	<td> {{invoice_total}}</td>
 </tr>
+
 
 <script>
 var coll = document.getElementsByClassName("collapsible");

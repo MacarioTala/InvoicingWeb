@@ -6,8 +6,8 @@ from djmoney.models.fields import MoneyField
 # Create your models here.
 class Resource(models.Model):
     ResourceId=models.AutoField(primary_key=True)
-    ResourceName=models.CharField(max_length=100)
-    ResourceEmail=models.CharField(max_length=100)
+    ResourceName=models.CharField(max_length=100,unique=True)
+    ResourceEmail=models.CharField(max_length=100,unique=True)
 	
     def __str__(self) -> str:
 	    return self.ResourceName
@@ -22,12 +22,12 @@ class Remittance(models.Model):
 #customer stuff	
 class Customer(models.Model):
     CustomerId=models.AutoField(primary_key=True)
-    CustomerName=models.CharField(max_length=100)
+    CustomerName=models.CharField(max_length=100,unique=True)
     CustomerAcronym=models.CharField(max_length=10)
 	
     def __str__(self) -> str:
 	    return self.CustomerName
-
+	
 class CustomerInvoice(models.Model):
     InvoiceId=models.AutoField(primary_key=True)
     InvoiceNumber=models.CharField(max_length=30)
@@ -38,6 +38,13 @@ class CustomerInvoice(models.Model):
     InvoiceCustomer=models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     InvoiceURL=models.URLField(max_length=200)
     AmountOnInvoice=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+	
+    def just_the_invoice_number(self)->int:
+        mts='MTS-'
+        acronym=self.InvoiceCustomer.CustomerAcronym
+        start_of_invoice_number=len(mts)+len(acronym)+1
+		
+        return int(self.InvoiceNumber[start_of_invoice_number:])
 	
     def __str__(self) -> str:
 	    return self.InvoiceNumber
