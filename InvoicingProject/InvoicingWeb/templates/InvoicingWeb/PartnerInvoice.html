@@ -37,9 +37,17 @@ tr:nth-child(even) {
 </p>
 {%if invoice_list %}
 <table>
+	<tr>
+	<th>Effective Year</th>
+	<th>Effective Month</th>
+	<th> Invoice Number </th>
+	
+	</tr>
 	{% for invoice in invoice_list %}		
-		<tr> 
-			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a>
+		<tr>
+			<td> placeholder </td>
+			<td> placeholder </td>
+			<td><a href="/InvoicingWeb/Partner/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a></td>
 		</tr>
 	{% endfor %}
 </table>

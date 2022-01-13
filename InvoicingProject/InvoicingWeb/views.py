@@ -12,6 +12,8 @@ from django.db.models import Max
 from .customer_invoices import customer_invoices,get_customer_invoice_data
 from .generated_partner_invoice import generated_partner_invoice
 from .partner_invoice_detail import partner_invoice_detail
+from .customer_invoice_detail import customer_invoice_detail
+
 # Create your views here.
 
 def index(request):
@@ -55,11 +57,6 @@ def partner_invoices(request,partner_name):
 	"partner_name":partner_name}
 	
 	return render(request=request,template_name=template_name,context=context)
-	
-
-def customer_invoice_detail(request,invoice_number):
-	context = get_customer_invoice_detail_data(invoice_number)
-	return render(request=request, template_name='InvoicingWeb/CustomerInvoiceDetail.html',context=context)
 
 def customer_detail(request,customer_name):
 	#data
@@ -76,38 +73,7 @@ def side_by_side(request,invoice_number):
 	return render(request=request, template_name='InvoicingWeb/SideBySide.html',context=context)
 
 
-#functions
-	
-def get_customer_invoice_detail_data(invoice_number):
-	#data
-	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
-	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	invoice_total = customer_invoice_totals(invoice_number)["invoice_total"]
-	hours_total = customer_invoice_totals(invoice_number)["hours_total"]
-	partner_invoice="" #is there a better way to do empty strings in Python?
-	if PartnerInvoice.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber).exists():
-		partner_invoice = PartnerInvoice.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber).get()
-	
-	class customer_invoice_line_item:
-		def __init__ (self,invoice_line_item,amount):
-			self.invoice_line_item=invoice_line_item
-			self.amount=amount
-	
-	display_line_items=[]
-	
-	for line_item in relevant_invoice_lineitems:
-		current_rate = line_item.get_resource_rate()['rate_to_customer']
-		total_amount = line_item.TotalHours * current_rate
-		display_line_items.append(customer_invoice_line_item(invoice_line_item=line_item,amount=round(total_amount,2)))
-		
-	#display
-	context=({"invoice" : relevant_invoice, 
-	"invoice_total" : invoice_total,
-	"invoice_line_items": display_line_items,
-	"invoice_hours_total":hours_total,
-	"partner_invoice": partner_invoice}) 
-	return context
-	
+#functions	
 def get_customer_side_by_side_data(request,customer_name):
 	class side_by_side_row:
 		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerAmount, Margin):
@@ -167,30 +133,6 @@ def get_side_by_side_data(invoice_number):
 	
 	return context
 
-
-def customer_invoice_totals(invoice_number):#This is very DB heavy, refactor this later. This is one hit per line_item
-	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
-	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	
-	class rate_adjusted_line_item:
-		def __init__(self,CustomerInvoiceLineItem,TotalAmount):
-			self.CustomerInvoiceLineItem=CustomerInvoiceLineItem
-			self.TotalAmount=TotalAmount
-	rate_adjusted_line_items= []
-	
-	for line_item in relevant_invoice_lineitems: 
-			current_rate = line_item.get_resource_rate()['rate_to_customer']
-			total_amount = line_item.TotalHours * current_rate
-			current_item = rate_adjusted_line_item(rate_adjusted_line_item,total_amount)
-			rate_adjusted_line_items.append(current_item)
-	
-	invoice_total = sum(rate_adjusted_line_item.TotalAmount for rate_adjusted_line_item in rate_adjusted_line_items)
-	hours_total = relevant_invoice_lineitems.aggregate(Sum('TotalHours'))['TotalHours__sum']
-	
-	#totals 
-	totals=({"invoice_total" : Money(invoice_total,'USD'),#remove hardcode of USD later
-	"hours_total": round(hours_total,2)})
-	return totals
 
 def partner_invoice_totals(invoice_number):#This is very DB heavy, refactor this later. This is one hit per line_item
 	relevant_invoice = PartnerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
