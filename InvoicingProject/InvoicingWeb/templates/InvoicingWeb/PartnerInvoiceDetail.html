@@ -55,8 +55,12 @@ Totals:
 	<td>{{invoice_hours_total}}</td>
 </tr>
 <tr>
-	<td> Invoice Total = </td>
-	<td>{{invoice_total}}</td>
+	<td> Stated Total </td>
+	<td> {{invoice.AmountOnInvoice}}</td>
+</tr>
+<tr>
+	<td> Computed Total = </td>
+	<td>{{computed_total}}</td>
 </tr>
 </TABLE>
 <script src="{% static "tinymce/js/prism.js" %}"></script>

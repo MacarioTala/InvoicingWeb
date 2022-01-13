@@ -1,6 +1,7 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 from djmoney.models.fields import MoneyField
+from django.db.models import Sum, Q
 
 
 # Create your models here.
@@ -11,7 +12,6 @@ class Resource(models.Model):
 	
     def __str__(self) -> str:
 	    return self.ResourceName
-
 	
 class Remittance(models.Model):
     RemittanceId=models.AutoField(primary_key=True)
@@ -48,6 +48,12 @@ class CustomerInvoice(models.Model):
 	
     def __str__(self) -> str:
 	    return self.InvoiceNumber
+	
+    def get_next_customer_invoice_number(self) ->str:
+        invoice_numbers=[]
+        for x in self.objects.all():
+            invoice_numbers.append(x.just_the_invoice_number())
+        return max(invoice_numbers)+1
 
 class CustomerInvoiceLineItem(models.Model):
     CInvoiceLineItemId=models.AutoField(primary_key=True)
@@ -55,6 +61,17 @@ class CustomerInvoiceLineItem(models.Model):
     Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING,null=True)
     TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
     Comments=models.CharField(max_length=127,null=True,blank=True)
+	
+    def get_resource_rate(self):
+        try:
+            relevant_ResourceRate_object = ResourceRate.objects.get(Q(Customer__CustomerId=self.CustomerInvoice.InvoiceCustomer.CustomerId) 
+			& Q(Resource__ResourceId=self.Resource.ResourceId))
+        except ResourceRate.DoesNotExist:
+            relevant_ResourceRate_object = None
+        rate_to_customer=relevant_ResourceRate_object.RateToCustomer if relevant_ResourceRate_object is not None else 0
+        transfer_rate=relevant_ResourceRate_object.TransferRate if relevant_ResourceRate_object is not None else 0
+        context= { "rate_to_customer" : rate_to_customer,"transfer_rate" : transfer_rate}
+        return context
 
 #partner stuff
 class Partner(models.Model):
@@ -84,9 +101,12 @@ class PartnerInvoiceLineItem(models.Model):
     PartnerInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.CASCADE)
     Resource=models.ForeignKey(Resource, on_delete=models.DO_NOTHING)
     TotalHours=models.DecimalField(max_digits=12,decimal_places=2)
-    Rate=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
-    TotalAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+    Rate=models.DecimalField(max_digits=14,decimal_places=2)
+    TotalAmount=models.DecimalField(max_digits=14,decimal_places=2)
     Comments=models.CharField(max_length=127,null=True,blank=True)	
+    
+    def ComputedAmount(self):
+	    return self.TotalHours*self.Rate
 
 #project Stuff
 class Project(models.Model):
