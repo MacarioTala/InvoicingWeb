@@ -13,8 +13,8 @@ def get_customer_invoice_detail_data(invoice_number):
 	#data
 	relevant_invoice = CustomerInvoice.objects.filter(InvoiceNumber=invoice_number).get()
 	relevant_invoice_lineitems = CustomerInvoiceLineItem.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber)
-	invoice_total = customer_invoice_totals(invoice_number)["invoice_total"]
-	hours_total = customer_invoice_totals(invoice_number)["hours_total"]
+	invoice_total = relevant_invoice.get_invoice_total()["invoice_total"]
+	hours_total = relevant_invoice.get_invoice_total()["hours_total"]#refactor this later to its own method
 	partner_invoice="" #is there a better way to do empty strings in Python?
 
 	if PartnerInvoice.objects.filter(CustomerInvoice__InvoiceNumber=relevant_invoice.InvoiceNumber).exists():
