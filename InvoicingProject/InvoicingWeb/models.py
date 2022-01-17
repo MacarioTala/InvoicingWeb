@@ -28,6 +28,9 @@ class Customer(models.Model):
 	def __str__(self) -> str:
 		return self.CustomerName
 	
+	def get_resource_rates(self):
+		return ResourceRate.objects.filter(Customer__CustomerId=self.CustomerId)
+	
 class CustomerInvoice(models.Model):
 	InvoiceId=models.AutoField(primary_key=True)
 	InvoiceNumber=models.CharField(max_length=30)
@@ -123,7 +126,6 @@ class PartnerInvoice(models.Model):
 	def get_rate_computed_invoice_total(self):
 		relevant_invoice_lineitems = PartnerInvoiceLineItem.objects.filter(PartnerInvoice__InvoiceNumber=self.InvoiceNumber)
 		current_customer_id=relevant_invoice_lineitems.first().PartnerInvoice.CustomerInvoice.InvoiceCustomer.CustomerId
-	
 	
 		class rate_adjusted_line_item:
 			def __init__(self, InvoiceLineItem, TotalAmount):

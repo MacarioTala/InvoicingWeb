@@ -13,6 +13,7 @@ from .customer_invoices import customer_invoices,get_customer_invoice_data
 from .generated_partner_invoice import generated_partner_invoice
 from .partner_invoice_detail import partner_invoice_detail
 from .customer_invoice_detail import customer_invoice_detail
+from .resource_rates import resource_rates
 
 # Create your views here.
 
