@@ -27,7 +27,7 @@ def get_partner_invoice_detail_data(invoice_number):
 	for line_item in relevant_invoice_lineitems:
 		current_amount=line_item.ComputedAmount()
 		
-		display_items.append(display_line_item(line_item=line_item,amount=current_amount))
+		display_items.append(display_line_item(line_item=line_item,amount=round(current_amount,2)))
 		
 		computed_total=computed_total+(current_amount)
 		hours_total=hours_total+(line_item.TotalHours)

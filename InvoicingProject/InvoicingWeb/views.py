@@ -77,11 +77,12 @@ def side_by_side(request,invoice_number):
 #functions	
 def get_customer_side_by_side_data(request,customer_name):
 	class side_by_side_row:
-		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerAmount, Margin):
+		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerStatedAmount,PartnerComputedAmount, Margin):
 			self.CustomerInvoiceNumber=CustomerInvoiceNumber
 			self.CustomerAmount=CustomerAmount
 			self.PartnerInvoiceNumber=PartnerInvoiceNumber
-			self.PartnerAmount=PartnerAmount
+			self.PartnerStatedAmount=PartnerStatedAmount
+			self.PartnerComputedAmount=PartnerComputedAmount
 			self.Margin=Margin
 			
 	customer_invoices=get_customer_invoice_data(customer_name)["invoice_list"]
@@ -89,10 +90,15 @@ def get_customer_side_by_side_data(request,customer_name):
 	side_by_side_list=[]
 	
 	for customer_invoice in customer_invoices:
-		customer_amount=customer_invoice.get_invoice_total()["invoice_total"]
-		partner_amount=partner_invoice_totals(customer_invoice.PartnerInvoiceNumber)["invoice_total"] 
-		margin=round(((customer_amount.amount-partner_amount.amount)/customer_amount.amount*100),2)
-		side_by_side_item=side_by_side_row(CustomerInvoiceNumber=customer_invoice.CustomerInvoiceNumber,PartnerInvoiceNumber=customer_invoice.PartnerInvoiceNumber,CustomerAmount=customer_amount, PartnerAmount=partner_amount,Margin=margin)
+		customer_amount=customer_invoice.InvoiceTotal
+		partner_computed_amount=customer_invoice.PartnerInvoice.get_rate_computed_invoice_total()['invoice_total']
+		partner_stated_amount=customer_invoice.PartnerInvoice.AmountOnInvoice
+		margin=round(((customer_amount.amount-partner_stated_amount.amount)/customer_amount.amount*100),2)
+		
+		side_by_side_item=side_by_side_row(CustomerInvoiceNumber=customer_invoice.CustomerInvoiceNumber,
+		PartnerInvoiceNumber=customer_invoice.PartnerInvoice.InvoiceNumber,CustomerAmount=customer_amount, 
+		PartnerStatedAmount=partner_stated_amount,PartnerComputedAmount=partner_computed_amount,Margin=margin)
+
 		side_by_side_list.append(side_by_side_item)
 	
 	context= {"side_by_side_list" : side_by_side_list}

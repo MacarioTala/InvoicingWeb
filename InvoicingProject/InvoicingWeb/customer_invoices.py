@@ -16,19 +16,20 @@ def get_customer_invoice_data(customer_name):
 	partner_invoice_list=PartnerInvoice.objects.filter(CustomerInvoice__InvoiceCustomer__CustomerName=customer_name)
 	
 	class inner_invoice:
-		def __init__(self,EffectiveYear,EffectiveMonth, CustomerInvoiceNumber,PartnerInvoiceNumber):
+		def __init__(self,EffectiveYear,EffectiveMonth, CustomerInvoiceNumber,PartnerInvoice,InvoiceTotal):
 			self.CustomerInvoiceNumber=CustomerInvoiceNumber
-			self.PartnerInvoiceNumber=PartnerInvoiceNumber
+			self.PartnerInvoice=PartnerInvoice
 			self.EffectiveMonth=EffectiveMonth
 			self.EffectiveYear=EffectiveYear
+			self.InvoiceTotal=InvoiceTotal
 			
 	invoice_list=[]
 	for customer_invoice in customer_invoice_list:
-		partner_invoice_number=partner_invoice_list.filter(CustomerInvoice__InvoiceNumber=customer_invoice.InvoiceNumber).first()		
+		partner_invoice=partner_invoice_list.filter(CustomerInvoice__InvoiceNumber=customer_invoice.InvoiceNumber).first()		
 		current_year=customer_invoice.InvoiceFromDate.year
 		current_month=customer_invoice.InvoiceFromDate.month
-		current_invoice=inner_invoice(CustomerInvoiceNumber=customer_invoice.InvoiceNumber, PartnerInvoiceNumber=partner_invoice_number,
-		EffectiveYear=current_year, EffectiveMonth=current_month)
+		current_invoice=inner_invoice(CustomerInvoiceNumber=customer_invoice.InvoiceNumber, PartnerInvoice=partner_invoice,
+		EffectiveYear=current_year, EffectiveMonth=current_month,InvoiceTotal=customer_invoice.get_invoice_total()["invoice_total"])
 		invoice_list.append(current_invoice)
 	
 	context = {	"customer_name":customer_name,

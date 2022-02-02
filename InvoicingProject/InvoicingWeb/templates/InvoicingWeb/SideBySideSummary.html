@@ -41,7 +41,8 @@ tr:nth-child(even) {
 		<th>Customer Invoice</th>
 		<th>Invoice Amount</th>
 		<th>Partner Invoice</th>
-		<th>Invoice Amount</th>
+		<th>Stated Partner Amount</th>
+		<th>Computed Partner Amount</th>
 		<th>Margin</th>
 		</tr>
 		<tr>
@@ -55,7 +56,10 @@ tr:nth-child(even) {
 			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoiceNumber}}</a>
 			</td>
 			<td>
-			{{invoice.PartnerAmount}}
+			{{invoice.PartnerStatedAmount}}
+			</td>
+			<td>
+			{{invoice.PartnerComputedAmount}}
 			</td>
 			<td>
 			{{invoice.Margin}} %
