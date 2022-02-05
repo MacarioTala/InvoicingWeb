@@ -134,9 +134,12 @@ class PartnerInvoice(models.Model):
 			
 		rate_adjusted_line_items=[]
 	
-		for line_item in relevant_invoice_lineitems: 
+		for line_item in relevant_invoice_lineitems: #you are here
 			current_rate = line_item.get_resource_rate()
-			total_amount = line_item.TotalHours * current_rate 
+			
+			current_matching_customer_line_item=line_item.get_matching_customer_invoice_line_item()
+			total_amount = (line_item.get_matching_customer_invoice_line_item().TotalHours * current_rate ) if current_matching_customer_line_item else 0
+			
 			current_item = rate_adjusted_line_item(rate_adjusted_line_item,total_amount)
 			rate_adjusted_line_items.append(current_item)
 	
@@ -158,8 +161,12 @@ class PartnerInvoiceLineItem(models.Model):
 	TotalAmount=models.DecimalField(max_digits=14,decimal_places=2)
 	Comments=models.CharField(max_length=127,null=True,blank=True)	
     
-	def ComputedAmount(self):
+	def StatedAmount(self):
 		return self.TotalHours*self.Rate
+	
+	def	ComputedAmount(self):
+		relevant_line_item=self.get_matching_customer_invoice_line_item()
+		return relevant_line_item.TotalHours * self.get_resource_rate()
 	
 	def get_resource_rate(self):
 		try:
@@ -172,6 +179,16 @@ class PartnerInvoiceLineItem(models.Model):
 		transfer_rate=relevant_ResourceRate_object.TransferRate if relevant_ResourceRate_object is not None else 0
 		
 		return transfer_rate
+		
+	def get_matching_customer_invoice_line_item(self):
+		try:
+			matching_line_item=self.PartnerInvoice.CustomerInvoice.customerinvoicelineitem_set.filter(Resource__ResourceId=self.Resource.ResourceId).get()
+		except PartnerInvoice.DoesNotExist:
+			matching_line_item=None
+		except CustomerInvoiceLineItem.DoesNotExist:
+			matching_line_item=None
+		return matching_line_item
+	
 
 #project Stuff
 class Project(models.Model):

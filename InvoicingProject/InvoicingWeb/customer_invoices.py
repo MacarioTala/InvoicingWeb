@@ -25,7 +25,7 @@ def get_customer_invoice_data(customer_name):
 			
 	invoice_list=[]
 	for customer_invoice in customer_invoice_list:
-		partner_invoice=partner_invoice_list.filter(CustomerInvoice__InvoiceNumber=customer_invoice.InvoiceNumber).first()		
+		partner_invoice=customer_invoice.partnerinvoice
 		current_year=customer_invoice.InvoiceFromDate.year
 		current_month=customer_invoice.InvoiceFromDate.month
 		current_invoice=inner_invoice(CustomerInvoiceNumber=customer_invoice.InvoiceNumber, PartnerInvoice=partner_invoice,

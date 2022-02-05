@@ -98,14 +98,22 @@ tr:nth-child(even) {
 <TABLE border=1>
 	<tr>
 		<th> Resource Name </th>
-		<th> Total Hours </th>
-		<th> Total Amount</th>
+		<th> Stated Rate </th>
+		<th> Actual Rate </th>
+		<th> Calculated Hours </th>
+		<th> Actual Hours </th>
+		<th> Stated Amount</th>
+		<th> Actual Amount</th>
 	</tr>
 	{% for LineItem in invoice_line_items %}
 	<tr>
-		<td>{{LineItem.line_item.Resource.ResourceName}}</td>		
+		<td>{{LineItem.line_item.Resource.ResourceName}}</td>	
+		<td>{{LineItem.line_item.Rate}}</td>
+		<td>{{LineItem.line_item.get_resource_rate}}</td>
+		<td>{{LineItem.line_item.get_matching_customer_invoice_line_item.TotalHours}}</td>
 		<td>{{LineItem.line_item.TotalHours}}
-		<td>{{LineItem.amount}}
+		<td>{{LineItem.stated_amount}}
+		<td>{{LineItem.computed_amount}}</td>
 	</tr>
 {%endfor%}
 </TABLE>
@@ -118,7 +126,7 @@ Totals:
 	<td>{{invoice_hours_total}}</td>
 </tr>
 <tr>
-	<td> Stated Total </td>
+	<td> Stated Total = </td>
 	<td> {{invoice.AmountOnInvoice}}</td>
 </tr>
 <tr>
