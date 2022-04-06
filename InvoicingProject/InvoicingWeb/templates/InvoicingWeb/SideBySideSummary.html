@@ -36,7 +36,6 @@ tr:nth-child(even) {
 </head>
 {%if side_by_side_list %}
 <table>
-	{% for invoice in side_by_side_list %}		
 		<tr>
 		<th>Customer Invoice</th>
 		<th>Invoice Amount</th>
@@ -45,6 +44,7 @@ tr:nth-child(even) {
 		<th>Computed Partner Amount</th>
 		<th>Margin</th>
 		</tr>
+	{% for invoice in side_by_side_list %}		
 		<tr>
 			<td>
 			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
@@ -55,12 +55,21 @@ tr:nth-child(even) {
 			<td>
 			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoiceNumber}}</a>
 			</td>
+			{% if invoice.PartnerStatedAmount > invoice.PartnerComputedAmount %}
+			<td style="color:red">
+			{{invoice.PartnerStatedAmount}}
+			</td>
+			<td style="color:red">
+			{{invoice.PartnerComputedAmount}}
+			</td>
+			{% else %}
 			<td>
 			{{invoice.PartnerStatedAmount}}
 			</td>
 			<td>
 			{{invoice.PartnerComputedAmount}}
 			</td>
+			{% endif %}
 			<td>
 			{{invoice.Margin}} %
 			</td>

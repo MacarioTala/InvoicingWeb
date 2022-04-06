@@ -40,14 +40,23 @@ tr:nth-child(even) {
 	<tr>
 	<th>Effective Year</th>
 	<th>Effective Month</th>
-	<th> Invoice Number </th>
+	<th>Invoice Number </th>
+	<th>Stated Total </th>
+	<th>Computed Total </th>
 	
 	</tr>
 	{% for invoice in invoice_list %}		
 		<tr>
-			<td> placeholder </td>
-			<td> placeholder </td>
+			<td> {{invoice.EffectiveYear}} </td>
+			<td> {{invoice.EffectiveMonth}}</td>
 			<td><a href="/InvoicingWeb/Partner/Invoice/{{invoice.InvoiceNumber}}">{{invoice.InvoiceNumber}}</a></td>
+			{% if invoice.StatedTotal > invoice.ComputedTotal %}
+			<td style="color:red">{{invoice.StatedTotal}}</td>
+			<td style="color:red">{{invoice.ComputedTotal}}</td>
+			{%else%}
+			<td>{{invoice.StatedTotal}}</td>
+			<td>{{invoice.ComputedTotal}}</td>
+			{%endif%}
 		</tr>
 	{% endfor %}
 </table>

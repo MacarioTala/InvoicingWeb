@@ -77,8 +77,9 @@ tr:nth-child(even) {
 			<td>{{invoice.EffectiveYear}}</td>
 			<td>{{invoice.EffectiveMonth}}</td>
 			<td><a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a></td>
-			<td>{% if invoice.PartnerInvoiceNumber %}
-				<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoiceNumber}}"> Side by Side </a>
+				{% if invoice.PartnerInvoice %}
+				{{invoice.PartnerInvoice.InvoiceNumber}}
+				<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoice.InvoiceNumber}}"> Side by Side </a>
 				{% else %}
 				No associated Partner Invoice
 				{% endif %}

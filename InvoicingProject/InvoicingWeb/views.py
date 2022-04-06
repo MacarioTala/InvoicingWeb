@@ -10,6 +10,7 @@ from django.db.models import Max
 
 #the views below are in files with the same names
 from .customer_invoices import customer_invoices,get_customer_invoice_data
+from .partner_invoices import partner_invoices,get_partner_invoice_data
 from .generated_partner_invoice import generated_partner_invoice
 from .partner_invoice_detail import partner_invoice_detail
 from .customer_invoice_detail import customer_invoice_detail
@@ -49,15 +50,6 @@ def customer_invoices_side_by_side(request,customer_name):
 	context = get_customer_side_by_side_data(request,customer_name)
 	
 	return HttpResponse(template.render(context,request)) 
-
-def partner_invoices(request,partner_name):
-	partner_invoice_list=PartnerInvoice.objects.filter(InvoicePartner__PartnerName=partner_name)
-	template_name='InvoicingWeb/PartnerInvoice.html'
-	
-	context = {"invoice_list" : partner_invoice_list,
-	"partner_name":partner_name}
-	
-	return render(request=request,template_name=template_name,context=context)
 
 def customer_detail(request,customer_name):
 	#data
