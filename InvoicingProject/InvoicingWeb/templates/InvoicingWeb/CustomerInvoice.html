@@ -58,11 +58,17 @@ tr:nth-child(even) {
 }
 </style>
 </head>
+<body>
+<a href="/InvoicingWeb/"> Home </a>
+<br>
 <a href="/InvoicingWeb/SideBySideSummary/{{customer_name}}"> Show all invoices side by side </a>
 <br>
 <a href="/InvoicingWeb/ResourceRate/{{customer_name}}"> Show resource rates</a>
 </p>
 {%if invoice_list %}
+ {% for year in effective_years %}
+<button class="collapsible"> {{ year }}</button>
+<div class="content">
 <table>
 	<tr>
 		<th>Effective Year</th>
@@ -73,12 +79,13 @@ tr:nth-child(even) {
 	</tr>
 		
 	{% for invoice in invoice_list %}		
+	 {% if invoice.EffectiveYear == year %}
 		<tr> 
 			<td>{{invoice.EffectiveYear}}</td>
 			<td>{{invoice.EffectiveMonth}}</td>
 			<td><a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a></td>
 				{% if invoice.PartnerInvoice %}
-				{{invoice.PartnerInvoice.InvoiceNumber}}
+			<td>{{invoice.PartnerInvoice.InvoiceNumber}}
 				<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoice.InvoiceNumber}}"> Side by Side </a>
 				{% else %}
 				No associated Partner Invoice
@@ -86,8 +93,29 @@ tr:nth-child(even) {
 			</td>
 			<td><a href="/InvoicingWeb/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a></td>
 		</tr>
+	 {%endif%}
 	{% endfor %}
 </table>
+</div>
+{%endfor%}
 {%else%}
 	<p>no invoices for {{customer_name}}</p>
 {%endif%}
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+</body>

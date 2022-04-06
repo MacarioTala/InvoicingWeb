@@ -2,6 +2,7 @@
 <html>
 <head>
 <style>
+
 * {
   box-sizing: border-box;
 }
@@ -17,6 +18,30 @@
   padding: 5px;
 }
 
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -29,13 +54,20 @@ th, td {
   padding: 16px;
 }
 
-tr:nth-child(even) {
+tr:nth-of-type(even) {
   background-color: #f2f2f2;
+
+
 }
 </style>
 </head>
+<body>
+<a href="/InvoicingWeb/"> Home </a>
 </p>
 {%if invoice_list %}
+ {%for year in effective_years %}
+<button class="collapsible">{{year}}</button>
+<div class="content">
 <table>
 	<tr>
 	<th>Effective Year</th>
@@ -45,7 +77,8 @@ tr:nth-child(even) {
 	<th>Computed Total </th>
 	
 	</tr>
-	{% for invoice in invoice_list %}		
+	{% for invoice in invoice_list %}	
+     {% if invoice.EffectiveYear == year %}	
 		<tr>
 			<td> {{invoice.EffectiveYear}} </td>
 			<td> {{invoice.EffectiveMonth}}</td>
@@ -58,8 +91,28 @@ tr:nth-child(even) {
 			<td>{{invoice.ComputedTotal}}</td>
 			{%endif%}
 		</tr>
+	 {% endif %}
 	{% endfor %}
 </table>
+</div>
+ {%endfor%}
 {%else%}
 	<p>no invoices for {{partner_name}}</p>
 {%endif%}
+ <script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+</body>

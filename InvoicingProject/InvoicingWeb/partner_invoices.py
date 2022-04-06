@@ -37,6 +37,13 @@ def get_partner_invoice_data(partner_name):
 		
 		invoice_list.append(current_invoice)
 	
+	#Effective Years
+	effective_years=[]
+	for invoice in invoice_list:
+		if invoice.EffectiveYear not in effective_years:
+			effective_years.append(invoice.EffectiveYear)
+	
 	context = {	"partner_name":partner_name,
-	"invoice_list" : invoice_list}
+	"invoice_list" : invoice_list,
+	"effective_years" : effective_years}
 	return context
