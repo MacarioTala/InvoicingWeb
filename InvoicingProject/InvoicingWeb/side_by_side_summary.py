@@ -13,11 +13,9 @@ def customer_invoices_side_by_side(request,customer_name):
 	
 def get_customer_side_by_side_data(customer_name):
 	class side_by_side_row:
-		def __init__(self, CustomerInvoiceNumber, CustomerAmount, PartnerInvoiceNumber,PartnerStatedAmount,PartnerComputedAmount, Margin):
-			self.CustomerInvoiceNumber=CustomerInvoiceNumber
-			self.CustomerAmount=CustomerAmount
-			self.PartnerInvoiceNumber=PartnerInvoiceNumber
-			self.PartnerStatedAmount=PartnerStatedAmount
+		def __init__(self, CustomerInvoice, PartnerInvoice, PartnerComputedAmount, Margin):
+			self.CustomerInvoice=CustomerInvoice
+			self.PartnerInvoice=PartnerInvoice
 			self.PartnerComputedAmount=PartnerComputedAmount
 			self.Margin=Margin
 			
@@ -31,9 +29,7 @@ def get_customer_side_by_side_data(customer_name):
 		partner_stated_amount=customer_invoice.PartnerInvoice.AmountOnInvoice
 		margin=round(((customer_amount.amount-partner_stated_amount.amount)/customer_amount.amount*100),2)
 		
-		side_by_side_item=side_by_side_row(CustomerInvoiceNumber=customer_invoice.CustomerInvoiceNumber,
-		PartnerInvoiceNumber=customer_invoice.PartnerInvoice.InvoiceNumber,CustomerAmount=customer_amount, 
-		PartnerStatedAmount=partner_stated_amount,PartnerComputedAmount=partner_computed_amount,Margin=margin)
+		side_by_side_item=side_by_side_row(CustomerInvoice=customer_invoice,PartnerInvoice=customer_invoice.PartnerInvoice, PartnerComputedAmount=partner_computed_amount,Margin=margin)
 
 		side_by_side_list.append(side_by_side_item)
 	

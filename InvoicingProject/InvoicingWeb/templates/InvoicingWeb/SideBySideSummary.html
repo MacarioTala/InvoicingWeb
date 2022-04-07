@@ -49,24 +49,24 @@ tr:nth-child(even) {
 	{% for invoice in side_by_side_list %}		
 		<tr>
 			<td>
-			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a>
+			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoice.CustomerInvoiceNumber}}</a>
 			</td>
 			<td>
-			{{invoice.CustomerAmount}}
+			{{invoice.CustomerInvoice.InvoiceTotal}}
 			</td>
 			<td>
-			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoiceNumber}}</a>
+			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoice.InvoiceNumber}}</a>
 			</td>
-			{% if invoice.PartnerStatedAmount > invoice.PartnerComputedAmount %}
+			{% if invoice.PartnerInvoice.AmountOnInvoice > invoice.PartnerComputedAmount %}
 			<td style="color:red">
-			{{invoice.PartnerStatedAmount}}
+			{{invoice.PartnerInvoice.AmountOnInvoice}}
 			</td>
 			<td style="color:red">
 			{{invoice.PartnerComputedAmount}}
 			</td>
 			{% else %}
 			<td>
-			{{invoice.PartnerStatedAmount}}
+			{{invoice.PartnerInvoice.AmountOnInvoice}}
 			</td>
 			<td>
 			{{invoice.PartnerComputedAmount}}
