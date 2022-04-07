@@ -66,8 +66,8 @@ tr:nth-child(even) {
 <a href="/InvoicingWeb/ResourceRate/{{customer_name}}"> Show resource rates</a>
 </p>
 {%if invoice_list %}
- {% for year in effective_years %}
-<button class="collapsible"> {{ year }}</button>
+ {% for annual_total in annual_totals %}
+<button class="collapsible"> {{ annual_total.Year }} : {{ annual_total.Total}} </button>
 <div class="content">
 <table>
 	<tr>
@@ -79,7 +79,7 @@ tr:nth-child(even) {
 	</tr>
 		
 	{% for invoice in invoice_list %}		
-	 {% if invoice.EffectiveYear == year %}
+	 {% if invoice.EffectiveYear == annual_total.Year %}
 		<tr> 
 			<td>{{invoice.EffectiveYear}}</td>
 			<td>{{invoice.EffectiveMonth}}</td>

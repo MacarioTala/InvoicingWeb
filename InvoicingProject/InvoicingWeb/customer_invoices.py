@@ -32,13 +32,20 @@ def get_customer_invoice_data(customer_name):
 		EffectiveYear=current_year, EffectiveMonth=current_month,InvoiceTotal=customer_invoice.get_invoice_total()["invoice_total"])
 		invoice_list.append(current_invoice)
 	
-	#Effective Years
-	effective_years=[]
+	#Annual Totals
+	class annual_total:
+		def __init__(self,Year,Total):
+			self.Year=Year
+			self.Total=Total
+			
+	annual_totals=[]
 	for invoice in invoice_list:
-		if invoice.EffectiveYear not in effective_years:
-			effective_years.append(invoice.EffectiveYear)
+		if invoice.EffectiveYear not in (temp.Year for temp in annual_totals):
+			current_total=annual_total(Year=invoice.EffectiveYear,Total=sum((invoice.InvoiceTotal for invoice in [x for x in invoice_list if x.EffectiveYear==invoice.EffectiveYear])))
+			annual_totals.append(current_total)
+			
 	
 	context = {	"customer_name":customer_name,
 	"invoice_list" : invoice_list,
-	"effective_years" : effective_years}
+	"annual_totals" : annual_totals}
 	return context

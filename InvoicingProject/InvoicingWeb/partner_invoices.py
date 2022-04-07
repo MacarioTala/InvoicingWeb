@@ -37,13 +37,22 @@ def get_partner_invoice_data(partner_name):
 		
 		invoice_list.append(current_invoice)
 	
-	#Effective Years
-	effective_years=[]
+	#Annual Totals
+	class annual_total:
+		def __init__(self,year,stated_total,computed_total):
+			self.year=year
+			self.stated_total=stated_total
+			self.computed_total=computed_total
+			
+	annual_totals=[]
 	for invoice in invoice_list:
-		if invoice.EffectiveYear not in effective_years:
-			effective_years.append(invoice.EffectiveYear)
+		if invoice.EffectiveYear not in (temp.year for temp in annual_totals):
+			current_stated_total=sum((invoice.StatedTotal for invoice in [x for x in invoice_list if x.EffectiveYear==invoice.EffectiveYear]))
+			current_computed_total=sum((invoice.ComputedTotal for invoice in [x for x in invoice_list if x.EffectiveYear==invoice.EffectiveYear]))
+			current_total=annual_total(year=invoice.EffectiveYear, computed_total=current_computed_total ,stated_total= current_stated_total)
+			annual_totals.append(current_total)
 	
 	context = {	"partner_name":partner_name,
 	"invoice_list" : invoice_list,
-	"effective_years" : effective_years}
+	"annual_totals" : annual_totals}
 	return context

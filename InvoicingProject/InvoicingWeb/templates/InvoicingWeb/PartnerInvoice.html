@@ -65,8 +65,8 @@ tr:nth-of-type(even) {
 <a href="/InvoicingWeb/"> Home </a>
 </p>
 {%if invoice_list %}
- {%for year in effective_years %}
-<button class="collapsible">{{year}}</button>
+ {%for annual_total in annual_totals %}
+<button class="collapsible">{{annual_total.year}}  Stated Total : {{ annual_total.stated_total}}  Computed Total : {{ annual_total.computed_total }}</button>
 <div class="content">
 <table>
 	<tr>
@@ -78,7 +78,7 @@ tr:nth-of-type(even) {
 	
 	</tr>
 	{% for invoice in invoice_list %}	
-     {% if invoice.EffectiveYear == year %}	
+     {% if invoice.EffectiveYear == annual_total.year %}	
 		<tr>
 			<td> {{invoice.EffectiveYear}} </td>
 			<td> {{invoice.EffectiveMonth}}</td>
