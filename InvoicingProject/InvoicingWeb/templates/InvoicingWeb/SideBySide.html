@@ -44,7 +44,10 @@ tr:nth-child(even) {
       </tr>
       <tr>
         <td>Invoice Number </td>
-        <td>{{customer_invoice.InvoiceNumber}}</td>
+        <td>
+			<a href="/InvoicingWeb/Customer/Invoice/{{customer_invoice.InvoiceNumber}}">
+			{{customer_invoice.InvoiceNumber}}
+		</td>
       </tr>
 	  <tr>
 		<td> Invoice Amount </td>
@@ -63,7 +66,10 @@ tr:nth-child(even) {
       </tr>
       <tr>
         <td>Invoice Number</td>
-        <td>{{partner_invoice.InvoiceNumber}}</td>
+        <td>
+			<a href="/InvoicingWeb/Partner/Invoice/{{partner_invoice.InvoiceNumber}}">
+			{{partner_invoice.InvoiceNumber}}
+		</td>
       </tr>
 	  	  <tr>
 		<td> Invoice Amount </td>
