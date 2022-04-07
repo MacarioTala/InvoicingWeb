@@ -80,7 +80,9 @@ tr:nth-child(even) {
 </tr>
 <tr> 
 	<td> Invoice URL:</td> 
-	<td> {{invoice.InvoiceURL}}</td>
+	<td>
+		<a href="{{invoice.InvoiceURL}}">{{invoice.InvoiceURL}}</a>
+	</td>
 </tr>
 <tr>
 	<td> Linked Customer Invoice:</td>
@@ -124,15 +126,15 @@ tr:nth-child(even) {
 Totals:
 <TABLE border=1>
 <tr>
-	<td> Total Hours = </td>
+	<td> Total Hours  </td>
 	<td>{{invoice_hours_total}}</td>
 </tr>
 <tr>
-	<td> Stated Total = </td>
+	<td> Stated Total </td>
 	<td> {{invoice.AmountOnInvoice}}</td>
 </tr>
 <tr>
-	<td> Computed Total = </td>
+	<td> Computed Total </td>
 	<td>{{computed_total}}</td>
 </tr>
 </TABLE>
