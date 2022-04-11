@@ -71,7 +71,6 @@ tr:nth-child(even) {
 <div class="content">
 <table>
 	<tr>
-		<th>Effective Year</th>
 		<th>Effective Month</th>
 		<th>Customer Invoice Number</th>
 		<th>Partner Invoice Number</th>
@@ -81,7 +80,6 @@ tr:nth-child(even) {
 	{% for invoice in invoice_list %}		
 	 {% if invoice.EffectiveYear == annual_total.Year %}
 		<tr> 
-			<td>{{invoice.EffectiveYear}}</td>
 			<td>{{invoice.EffectiveMonth}}</td>
 			<td><a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a></td>
 				{% if invoice.PartnerInvoice %}
