@@ -56,22 +56,10 @@ def get_customer_side_by_side_data(customer_name):
 			revenue_total = sum((item.CustomerInvoice.InvoiceTotal for item in [x for x in side_by_side_list if x.EffectiveYear==item.CustomerInvoice.EffectiveYear]))
 			stated_partner_total=sum((item.PartnerStatedAmount for item in [x for x in side_by_side_list if x.EffectiveYear==item.CustomerInvoice.EffectiveYear])) 
 			computed_partner_total=sum((item.PartnerComputedAmount for item in [x for x in side_by_side_list if x.EffectiveYear==item.CustomerInvoice.EffectiveYear])) 
-			current_total=annual_total(Year=item.EffectiveYear,RevenueTotal=revenue_total,StatedPartnerTotal=stated_partner_total,ComputedPartnerTotal=computed_partner_total)
+			current_total=annual_total(Year=customer_invoice.EffectiveYear,RevenueTotal=revenue_total,StatedPartnerTotal=stated_partner_total,ComputedPartnerTotal=computed_partner_total)
 			annual_totals.append(current_total)
-
-	#Customer Totals
-	customer_revenue_total=sum(item.RevenueTotal for item in [x for x in annual_totals])
-	partner_stated_amount_total=sum(item.StatedPartnerTotal for item in [x for x in annual_totals])
-	partner_computed_amount_total=sum(item.ComputedPartnerTotal for item in [x for x in annual_totals])
-	margin=round(((customer_revenue_total-partner_stated_amount_total)/customer_revenue_total)*100,2)
-	
+			
 	context= {"side_by_side_list" : side_by_side_list,
-	"annual_totals" : annual_totals,
-	"customer_name" : customer_name,
-	"partner_stated_amount_total":partner_stated_amount_total,
-	"partner_computed_amount_total":partner_computed_amount_total,
-	"customer_revenue_total": customer_revenue_total,
-	"margin":margin}
-	
+	"annual_totals" : annual_totals }
 	
 	return context

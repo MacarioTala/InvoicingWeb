@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<title> {{customer_name}} Invoices</title>
 <head>
 <style>
 * {
@@ -60,6 +61,23 @@ tr:nth-child(even) {
 <body>
 <a href="/InvoicingWeb/"> Home </a>
 <br>
+<button class="collapsible">{{customer_name}} Summary </button>
+<div class="content">
+<table>
+	<tr>
+		<th> Total Revenue </th>
+		<th> Stated Partner Amount Total </th>
+		<th> Computed Partner Amount Total </th>
+		<th> Margin </th>
+	</tr>
+	<tr>
+		<td> {{customer_revenue_total}}  </td>
+		<td> {{partner_stated_amount_total}} </td>
+		<td> {{partner_computed_amount_total}} </td>
+		<td> {{margin}} %</td>
+	</tr>
+</table>
+</div>
 {%if side_by_side_list %}
  {% for annual_total in annual_totals %}
  <button class="collapsible"> <b>{{ annual_total.Year }} Total Revenue:</b> {{ annual_total.RevenueTotal }} <b>Stated Partner Total :</b> {{annual_total.StatedPartnerTotal}} <b>Computed Partner Total:</b> {{annual_total.ComputedPartnerTotal}}</button>
@@ -75,6 +93,7 @@ tr:nth-child(even) {
 		 <th>Margin</th>
 		</tr>
 	{% for invoice in side_by_side_list %}		
+	 {% if invoice.EffectiveYear == annual_total.Year %}
 		<tr>
 			<td> {{invoice.CustomerInvoice.EffectiveMonth}} </td>
 			<td>
@@ -105,6 +124,7 @@ tr:nth-child(even) {
 			{{invoice.Margin}} %
 			</td>
 		</tr>
+	 {%endif%}
 	{% endfor %}
 </table>
 </div>
