@@ -38,7 +38,6 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  background-color: #f1f1f1;
 }
 
 table {
@@ -60,8 +59,10 @@ tr:nth-child(even) {
 </head>
 <body>
 <a href="/InvoicingWeb/"> Home </a>
+</p>
+<a href="/InvoicingWeb/SideBySide/"> Go to all Customer Revenue Report</a>
 <br>
-<button class="collapsible">{{customer_name}} Summary </button>
+<button class="collapsible">{{customer_name}} <b>Customer Revenue Total :</b> {{customer_revenue_total}} <b>Stated Partner Total :</b> {{partner_stated_amount_total}} <b> Margin:</b> {{margin}}</button>
 <div class="content">
 <table>
 	<tr>
@@ -97,13 +98,13 @@ tr:nth-child(even) {
 		<tr>
 			<td> {{invoice.CustomerInvoice.EffectiveMonth}} </td>
 			<td>
-			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoice.CustomerInvoiceNumber}}</a>
+			<a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoice.CustomerInvoiceNumber}}</a>
 			</td>
 			<td>
 			{{invoice.CustomerInvoice.InvoiceTotal}}
 			</td>
 			<td>
-			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoiceNumber}}">{{invoice.PartnerInvoice.InvoiceNumber}}</a>
+			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoice.InvoiceNumber}}">{{invoice.PartnerInvoice.InvoiceNumber}}</a>
 			</td>
 			{% if invoice.PartnerInvoice.AmountOnInvoice > invoice.PartnerComputedAmount %}
 			<td style="color:red">

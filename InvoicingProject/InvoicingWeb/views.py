@@ -17,6 +17,7 @@ from .customer_invoice_detail import customer_invoice_detail
 from .resource_rates import resource_rates
 from .side_by_side import side_by_side
 from .side_by_side_summary import customer_invoices_side_by_side
+from .side_by_side_all import side_by_side_all
 
 # Create your views here.
 

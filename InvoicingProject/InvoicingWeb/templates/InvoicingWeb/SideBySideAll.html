@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<title> Customer Summary </title>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<a href="/InvoicingWeb/"> Home </a>
+<br>
+{%if side_by_side_all_list %}
+ {% for item in side_by_side_all_list %}
+<table>
+		<tr><b>Revenue YTD :</b>{{revenue_total}}</tr>
+		<tr>
+		 <th>Customer </th>
+		 <th>Total Revenue </th>
+		 <th>Stated Partner Total</th>
+		 <th>Computed Partner Total</th>
+		 <th>Margin</th>
+		 <th>Options</th>
+		</tr>
+		<tr>
+		 <td>{{ item.customer_name }} </td>
+		 <td>{{ item.customer_revenue_total}}
+		 <td>{{ item.partner_stated_amount_total}}</td>
+		 <td>{{ item.partner_computed_amount_total}}</td>
+		 <td>{{ item.margin}}</td>
+		 <td>
+			<a href="/InvoicingWeb/SideBySideSummary/{{item.customer_name}}"> {{item.customer_name}} details</a>
+		 </td>
+		</tr>
+</table>
+{% endfor %}
+{%endif%}
+</body>

@@ -63,7 +63,10 @@ def get_customer_side_by_side_data(customer_name):
 	customer_revenue_total=sum(item.RevenueTotal for item in [x for x in annual_totals])
 	partner_stated_amount_total=sum(item.StatedPartnerTotal for item in [x for x in annual_totals])
 	partner_computed_amount_total=sum(item.ComputedPartnerTotal for item in [x for x in annual_totals])
-	margin=round(((customer_revenue_total-partner_stated_amount_total)/customer_revenue_total)*100,2)
+	if customer_revenue_total == 0:
+		margin=0
+	else:
+		margin=round(((customer_revenue_total-partner_stated_amount_total)/customer_revenue_total)*100,2)
 	
 	context= {"side_by_side_list" : side_by_side_list,
 	"annual_totals" : annual_totals,
