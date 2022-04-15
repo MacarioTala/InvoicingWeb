@@ -25,7 +25,11 @@ def get_customer_invoice_data(customer_name):
 			
 	invoice_list=[]
 	for customer_invoice in customer_invoice_list:
-		partner_invoice=customer_invoice.partnerinvoice
+		if hasattr(customer_invoice, 'partnerinvoice'):
+			partner_invoice=customer_invoice.partnerinvoice
+		else:
+			partner_invoice=None
+			
 		current_year=customer_invoice.InvoiceFromDate.year
 		current_month=customer_invoice.InvoiceFromDate.month
 		current_invoice=inner_invoice(CustomerInvoiceNumber=customer_invoice.InvoiceNumber, PartnerInvoice=partner_invoice,

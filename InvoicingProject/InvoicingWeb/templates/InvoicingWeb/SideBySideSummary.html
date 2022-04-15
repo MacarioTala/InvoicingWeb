@@ -103,23 +103,29 @@ tr:nth-child(even) {
 			<td>
 			{{invoice.CustomerInvoice.InvoiceTotal}}
 			</td>
-			<td>
-			<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoice.InvoiceNumber}}">{{invoice.PartnerInvoice.InvoiceNumber}}</a>
-			</td>
-			{% if invoice.PartnerInvoice.AmountOnInvoice > invoice.PartnerComputedAmount %}
-			<td style="color:red">
-			{{invoice.PartnerInvoice.AmountOnInvoice}}
-			</td>
-			<td style="color:red">
-			{{invoice.PartnerComputedAmount}}
-			</td>
+			{% if invoice.PartnerInvoice.InvoiceNumber %}
+				<td>
+				<a href="/InvoicingWeb/Partner/Invoice/{{invoice.PartnerInvoice.InvoiceNumber}}">{{invoice.PartnerInvoice.InvoiceNumber}}</a>
+				</td>
+				{% if invoice.PartnerInvoice.AmountOnInvoice > invoice.PartnerComputedAmount %}
+					<td style="color:red">
+					{{invoice.PartnerInvoice.AmountOnInvoice}}
+					</td>
+					<td style="color:red">
+					{{invoice.PartnerComputedAmount}}
+					</td>
+					{% else %}
+					<td>
+					{{invoice.PartnerInvoice.AmountOnInvoice}}
+					</td>
+					<td>
+					{{invoice.PartnerComputedAmount}}
+					</td>
+				{% endif %}
 			{% else %}
-			<td>
-			{{invoice.PartnerInvoice.AmountOnInvoice}}
-			</td>
-			<td>
-			{{invoice.PartnerComputedAmount}}
-			</td>
+				<td> No Partner Invoice</td>
+				<td> No Partner Invoice</td>
+				<td> No Partner Invoice</td>
 			{% endif %}
 			<td>
 			{{invoice.Margin}} %
