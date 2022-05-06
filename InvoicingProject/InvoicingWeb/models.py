@@ -18,6 +18,9 @@ class Remittance(models.Model):
 	RemittanceDate=models.DateField(null=True)
 	RemittanceConfirmationCode=models.CharField(blank=True,max_length=50)
 	RemittanceAmount=models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+	
+	def __str__(self)-> str:
+		return str(self.RemittanceDate) + "-" + str(self.RemittanceAmount)
 
 #customer stuff	
 class Customer(models.Model):
