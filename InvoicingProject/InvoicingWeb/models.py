@@ -2,6 +2,7 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from djmoney.models.fields import MoneyField,Money
 from django.db.models import Sum, Q
+import datetime as dt
 
 
 # Create your models here.
@@ -18,6 +19,14 @@ class Remittance(models.Model):
 	RemittanceDate=models.DateField(null=True)
 	RemittanceConfirmationCode=models.CharField(blank=True,max_length=50)
 	RemittanceAmount=models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+
+	def get_available_amount(self):#Untested
+		available=self.RemittanceAmount
+		number_of_invoices_allocated_to_this_remittance= PartnerInvoiceSettlement.filter(Remittance=self).count()
+		if number_of_invoices_allocated_to_this_remittance > 0 :
+			allocated=sum(x.SettlementAmount.amount for x in PartnerInvoiceSettlement.filter(Remittance=self))
+			available = available-allocated
+		return available
 	
 	def __str__(self)-> str:
 		return str(self.RemittanceDate) + "-" + str(self.RemittanceAmount)
@@ -117,12 +126,13 @@ class PartnerInvoice(models.Model):
 	InvoiceIssueDate=models.DateField(null=True)
 	InvoiceFromDate=models.DateField(null=True)
 	InvoiceToDate=models.DateField(null=True)
+	SettlementDate=models.DateField(null=True,blank=True)
 	InvoicePartner=models.ForeignKey(Partner, on_delete=models.DO_NOTHING)
 	InvoiceURL=models.URLField(max_length=200)
 	CustomerInvoice=models.OneToOneField(CustomerInvoice,on_delete=models.DO_NOTHING)
-	CoveredByRemittance=models.ForeignKey(Remittance,on_delete=models.DO_NOTHING,null=True,blank=True)
 	AmountOnInvoice=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
-		
+	IsSettled=models.BooleanField(default=False)
+	
 	def __str__(self) -> str:
 		return self.InvoiceNumber
 	
@@ -155,6 +165,32 @@ class PartnerInvoice(models.Model):
 		"hours_total": round(hours_total,2)})
 		return totals	
 
+	def settle(self,amount):#untested
+		allocated_amount=sum(x.SettlementAmount.amount for x in PartnerInvoiceSettlement.filter(Remittance=remittance))
+		if (remittance.RemittanceAmount-allocated_amount) >= amount:
+			new_allocation=PartnerInvoiceSettlement(remittance,settlement_amount,partner_invoice)
+			new_allocation.save()
+			close_partner_invoice()
+		else:
+			raise ValueError("This remittance is fully allocated")
+	
+	def close_partner_invoice(self,partner_invoice):#not yet tested
+		settled_amount=sum(x.SettlementAmount.amount for x in PartnerInvoiceSettlement.filter(PartnerInvoice=self))
+		if invoice_total==settled_amount:
+			partner_invoice.IsSettled=True
+			SettlementDate=dt.date.today()
+
+class PartnerInvoiceSettlement(models.Model):#untested
+	Id=models.AutoField(primary_key=True)
+	PartnerInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.DO_NOTHING,null=True)
+	Remittance=models.ForeignKey(Remittance, on_delete=models.DO_NOTHING,null=True)
+	SettlementAmount=MoneyField(max_digits=14, decimal_places=2, default_currency='USD',null=True)
+	
+	def __init__(self,remittance,settlement_amount,partner_invoice):
+		self.Remittance=remittance
+		self.SettlementAmount=settlement_amount
+		self.PartnerInvoice=partner_invoice
+	
 class PartnerInvoiceLineItem(models.Model):
 	PILineItemId=models.AutoField(primary_key=True)
 	PartnerInvoice=models.ForeignKey(PartnerInvoice,on_delete=models.CASCADE)

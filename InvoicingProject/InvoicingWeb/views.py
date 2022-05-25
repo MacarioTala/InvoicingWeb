@@ -2,8 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader,Context, Template
 from django.db.models import Sum, Q
-from .models import Customer,CustomerInvoice,CustomerInvoiceLineItem
-from .models import Partner,PartnerInvoice,PartnerInvoiceLineItem,ResourceRate
 from djmoney.models.fields import MoneyField
 from djmoney.money import Money
 from django.db.models import Max
@@ -18,6 +16,10 @@ from .resource_rates import resource_rates
 from .side_by_side import side_by_side
 from .side_by_side_summary import customer_invoices_side_by_side
 from .side_by_side_all import side_by_side_all
+
+#the views below are in the models subfolder refactor later 
+from .models import Customer,CustomerInvoice,CustomerInvoiceLineItem
+from .models import Partner,PartnerInvoice,PartnerInvoiceLineItem,ResourceRate
 
 # Create your views here.
 
