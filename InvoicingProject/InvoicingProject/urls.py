@@ -14,11 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.conf.urls import include,url
 #add routes to other projects here. Route actual views in their respective projects.
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-	url(r'', include('InvoicingWeb.urls'))
+	url(r'', include('InvoicingWeb.urls')),
+	path('accounts/',include('django.contrib.auth.urls')),
+	path('password-reset/', auth_views.PasswordChangeView.as_view())
 ]

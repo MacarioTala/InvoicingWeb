@@ -19,3 +19,4 @@ urlpatterns=[path('',views.index,name='Index'),
 	path('ResourceRate/',views.resource_rates,name='Resource Rates')
 	]
 	
+	
