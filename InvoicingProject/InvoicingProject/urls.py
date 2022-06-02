@@ -22,6 +22,6 @@ from django.conf.urls import include,url
 urlpatterns = [
     path('admin/', admin.site.urls),
 	url(r'', include('InvoicingWeb.urls')),
-	path('accounts/login',auth_views.LoginView.as_view()),
+	path('accounts/login/',auth_views.LoginView.as_view()),
 	path('password-reset/', auth_views.PasswordChangeView.as_view())
 ]
