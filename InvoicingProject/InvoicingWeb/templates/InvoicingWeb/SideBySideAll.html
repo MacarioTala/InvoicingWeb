@@ -35,7 +35,7 @@ tr:nth-child(even) {
 </style>
 </head>
 <body>
-<a href="/InvoicingWeb/"> Home </a>
+<a href="/"> Home </a>
 <br>
 {%if side_by_side_all_list %}
  {% for item in side_by_side_all_list %}
@@ -56,7 +56,7 @@ tr:nth-child(even) {
 		 <td>{{ item.partner_computed_amount_total}}</td>
 		 <td>{{ item.margin}}</td>
 		 <td>
-			<a href="/InvoicingWeb/SideBySideSummary/{{item.customer_name}}"> {{item.customer_name}} details</a>
+			<a href="/SideBySideSummary/{{item.customer_name}}"> {{item.customer_name}} details</a>
 		 </td>
 		</tr>
 </table>

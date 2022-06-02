@@ -87,8 +87,8 @@ tr:nth-child(even) {
 	<td> Linked Partner Invoice:</td>
 	{% if partner_invoice.InvoiceNumber|length > 0 %}
 	<td> 
-		<a href="/InvoicingWeb/Partner/Invoice/{{partner_invoice.InvoiceNumber}}">{{partner_invoice.InvoiceNumber}}</a> 
-		<a href="/InvoicingWeb/SideBySide/{{partner_invoice.InvoiceNumber}}"> Show side by side </a>
+		<a href="/Partner/Invoice/{{partner_invoice.InvoiceNumber}}">{{partner_invoice.InvoiceNumber}}</a> 
+		<a href="/SideBySide/{{partner_invoice.InvoiceNumber}}"> Show side by side </a>
 	</td>
 	{% else %}
 	<td>

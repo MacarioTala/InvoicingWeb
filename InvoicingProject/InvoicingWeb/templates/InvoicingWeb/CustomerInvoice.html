@@ -59,11 +59,11 @@ tr:nth-child(even) {
 </style>
 </head>
 <body>
-<a href="/InvoicingWeb/"> Home </a>
+<a href="/"> Home </a>
 <br>
-<a href="/InvoicingWeb/SideBySideSummary/{{customer_name}}"> Show all invoices side by side </a>
+<a href="/SideBySideSummary/{{customer_name}}"> Show all invoices side by side </a>
 <br>
-<a href="/InvoicingWeb/ResourceRate/{{customer_name}}"> Show resource rates</a>
+<a href="/ResourceRate/{{customer_name}}"> Show resource rates</a>
 </p>
 {%if invoice_list %}
  {% for annual_total in annual_totals %}
@@ -81,15 +81,15 @@ tr:nth-child(even) {
 	 {% if invoice.EffectiveYear == annual_total.Year %}
 		<tr> 
 			<td>{{invoice.EffectiveMonth}}</td>
-			<td><a href="/InvoicingWeb/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a></td>
+			<td><a href="/Customer/Invoice/{{invoice.CustomerInvoiceNumber}}">{{invoice.CustomerInvoiceNumber}}</a></td>
 				{% if invoice.PartnerInvoice %}
 			<td>{{invoice.PartnerInvoice.InvoiceNumber}}
-				<a href="/InvoicingWeb/SideBySide/{{invoice.PartnerInvoice.InvoiceNumber}}"> Side by Side </a>
+				<a href="/SideBySide/{{invoice.PartnerInvoice.InvoiceNumber}}"> Side by Side </a>
 				{% else %}
 				No associated Partner Invoice
 				{% endif %}
 			</td>
-			<td><a href="/InvoicingWeb/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a></td>
+			<td><a href="/GeneratePartnerInvoice/{{invoice.CustomerInvoiceNumber}}"> Generate Partner Invoice</a></td>
 		</tr>
 	 {%endif%}
 	{% endfor %}

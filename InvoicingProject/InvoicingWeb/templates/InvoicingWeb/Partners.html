@@ -1,11 +1,11 @@
-<a href="/InvoicingWeb/"> Home </a>
+<a href="/"> Home </a>
 <br>
 {%if partner_list %}
 <ol>
 	{% for partner in partner_list %}
 		<li> 
-			{{partner.PartnerName}} <a href="/InvoicingWeb/Partners/Invoices/{{partner.PartnerName}}"> Details </a> 
-			<a href="/InvoicingWeb/Partners/Invoices/{{partner.PartnerName}}"> Invoices</a>
+			{{partner.PartnerName}} <a href="/Partners/Invoices/{{partner.PartnerName}}"> Details </a> 
+			<a href="/Partners/Invoices/{{partner.PartnerName}}"> Invoices</a>
 		</li>
 	{% endfor %}
 <ol>

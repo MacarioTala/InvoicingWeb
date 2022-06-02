@@ -4,12 +4,12 @@
 <ol>
 	{% for customer in customer_list %}
 		<li> 
-			{{customer.CustomerName}} <a href="/InvoicingWeb/Customers/{{customer.CustomerName}}"> Details </a> 
-			<a href="/InvoicingWeb/Invoices/{{customer.CustomerName}}"> Invoices</a>
+			{{customer.CustomerName}} <a href="/Customers/{{customer.CustomerName}}"> Details </a> 
+			<a href="/Invoices/{{customer.CustomerName}}"> Invoices</a>
 		</li>
 	{% endfor %}
 		<li>
-			<a href="/InvoicingWeb/SideBySide/"> See Customer Profitability Report</a>
+			<a href="/SideBySide/"> See Customer Profitability Report</a>
 		</li>
 <ol>
 {%else%}
